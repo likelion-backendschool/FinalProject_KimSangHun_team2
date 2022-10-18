@@ -131,13 +131,13 @@ public class MemberController {
      *@param  oripassword  변경전 기존 비밀번호 입력값
      * */
     @PostMapping("/modifyPassword")
-    public  String modifyPassword(@AuthenticationPrincipal MemberContext context,String password,String oriPassword,Model model){
+    public  String modifyPassword(@AuthenticationPrincipal MemberContext context,String password,String oldPassword,Model model){
 
         String encodedPassword=passwordEncoder.encode(password);
         Member member=memberService.getMemberById(context.getId());
 
         //변경전 입력하는 기존 비밀번호 가 일치하는지 확인
-        if(!passwordEncoder.matches(oriPassword,member.getPassword())){
+        if(!passwordEncoder.matches(oldPassword,member.getPassword())){
             model.addAttribute("error","비밀번호가 일치 하지 않습니다.");
             return "/member/modifyPwForm";
         }

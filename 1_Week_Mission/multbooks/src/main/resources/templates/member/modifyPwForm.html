@@ -10,10 +10,10 @@
         <form method="post" onsubmit="modifyForm__submit(this); return false;" th:action >
             <h3 class="text-3xl font-bold mb-6 dark:text-white">비밀번호 변경</h3>
             <div class="mb-6">
-                <label for="oriPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">기존 비밀번호</label>
-                <input type="password" name="oriPassword"  id="oriPassword" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="*******">
+                <label for="oldPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">기존 비밀번호</label>
+                <input type="password" name="oldPassword"  id="oldPassword" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="*******">
                 <p th:if="${error}" th:text="${error}" class="font-medium text-sm text-blue-700"></p>
-                <p id="field_error_oriPassword" class="font-medium text-sm text-blue-700"></p>
+                <p id="field_error_oldPassword" class="font-medium text-sm text-blue-700"></p>
             </div>
             <div class="mb-6">
                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">변경될 비밀번호</label>
@@ -32,15 +32,15 @@
     <script>
         //수정폼 제출시 비밀번호 빈값 과 비밀번호 일치를 확인
          function modifyForm__submit(form) {
-                form.oriPassword.value = form.oriPassword.value.trim();
+                form.oldPassword.value = form.oldPassword.value.trim();
 
-                $('#field_error_oriPassword').text('');//이미 에러메세지가 있으면 삭제
+                $('#field_error_oldPassword').text('');//이미 에러메세지가 있으면 삭제
                  $('#field_error_password').text('');//이미 에러메세지가 있으면 삭제
                 $('#field_error_passwordConfirm').text('');//이미 에러메세지가 있으면 삭제
 
-                if (form.oriPassword.value.length == 0) {
-                    $('#field_error_oriPassword').text('비밀 번호를 입력해주세요.');
-                    form.oriPassword.focus();
+                if (form.oldPassword.value.length == 0) {
+                    $('#field_error_oldPassword').text('비밀 번호를 입력해주세요.');
+                    form.oldPassword.focus();
                     return;
                 }
 
