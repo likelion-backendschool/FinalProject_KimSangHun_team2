@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.security.dto;
 
 import com.ebook.multbooks.app.member.entity.Member;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,9 +20,9 @@ import java.util.List;
 public class MemberContext extends User {
     private final Long id;
     private final LocalDateTime createDate;
-    private final LocalDateTime updateDate;
-    private final String nickname;
-    private final String email;
+    private  LocalDateTime updateDate;
+    private  String nickname;
+    private String email;
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
         super(member.getUsername(),member.getPassword(),authorities);
         this.id=member.getId();
@@ -29,5 +30,12 @@ public class MemberContext extends User {
         this.updateDate=member.getUpdateDate();
         this.nickname=member.getNickname();
         this.email=member.getEmail();
+    }
+
+
+    public void update(String email, String nickname, LocalDateTime updateDate) {
+        this.email=email;
+        this.nickname=nickname;
+        this.updateDate=updateDate;
     }
 }

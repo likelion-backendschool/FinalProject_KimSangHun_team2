@@ -6,10 +6,12 @@
 </head>
 <body>
 <main layout:fragment="main">
-    <p th:text="${msg}"></p>
-    <!--로그인정보 출력 해보기-->
-    <p th:text="${#authentication.name}"></p>
-    <p th:text="${#authentication.authorities}"></p>
+    <div class="my-5 mx-5 border-2 border-blue-200 justify-center items-center">
+        asdas
+    </div>
+    <div class="border-2 border-red-100">
+        <p th:text="${#authentication.principal.updateDate}"></p>
+    </div>
 </main>
 </body>
 </html>

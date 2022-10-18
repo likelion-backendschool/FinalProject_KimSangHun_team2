@@ -3,10 +3,14 @@ package com.ebook.multbooks.app.member.controller;
 import com.ebook.multbooks.app.member.dto.JoinFormDto;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.util.Util;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,4 +83,34 @@ public class MemberController {
         return "/member/loginForm";
     }
 
+    @GetMapping("/modify")
+    @PreAuthorize("isAuthenticated()")
+    public String modifyForm(){
+        return "/member/modifyForm";
+    }
+
+    /**
+     * 회원정보를 수정
+     * 회원정보 세션도 변경하면 캐시도 변경됨
+     * @param  context 로그인된 회원정보
+     * @param  email 변경된 이메일
+     * @param  nickname 변경된 작가명
+     *
+     * */
+    @PostMapping("/modify")
+    @PreAuthorize("isAuthenticated()")
+    public String modify(@AuthenticationPrincipal MemberContext context, String email, String nickname){
+
+        Member member=memberService.getMemberById(context.getId());
+
+        memberService.modify(member,email,nickname);
+
+        // 기존에 세션에 저장된 MemberContext 객체의 내용을 수정하는 코드 시작
+        context.update(member.getEmail(),member.getNickname(),member.getUpdateDate());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(context, member.getPassword(), context.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 기존에 세션에 저장된 MemberContext 객체의 내용을 수정하는 코드 끝
+
+        return "redirect:/?msg="+ Util.url.encode("프로필수정 완료!");
+    }
 }

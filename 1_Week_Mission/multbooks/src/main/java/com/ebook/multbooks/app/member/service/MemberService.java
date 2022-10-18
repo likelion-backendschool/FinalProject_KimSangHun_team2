@@ -4,11 +4,17 @@ import com.ebook.multbooks.app.member.authority.AuthLevel;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -43,5 +49,18 @@ public class MemberService {
         }
 
         return memberRepository.save(member);
+    }
+
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * 더티캐싱이용한
+     * 회원정보 수정
+     * */
+    @Transactional
+    public void modify(Member member, String email, String nickname) {
+         member.update(email,nickname);
     }
 }

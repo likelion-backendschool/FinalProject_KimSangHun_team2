@@ -31,4 +31,15 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private AuthLevel authLevel;
 
+    public Member update(String email, String nickname) {
+        this.email=email;
+        if(this.nickname.equals("")&&!nickname.equals("")){
+            this.authLevel=AuthLevel.AUTHOR;
+        }
+        if(!this.nickname.equals("")&&nickname.equals("")){
+            this.authLevel=AuthLevel.USER;
+        }
+        this.nickname=nickname;
+        return this;
+    }
 }
