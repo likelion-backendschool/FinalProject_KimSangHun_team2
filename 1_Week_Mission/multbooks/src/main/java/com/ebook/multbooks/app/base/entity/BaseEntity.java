@@ -33,7 +33,6 @@ public abstract class BaseEntity {
     private LocalDateTime createDate;
 
     @LastModifiedDate
-    @Column(updatable = false)//개발자가 임의로 수정 못하도록 false 설정
     private LocalDateTime updateDate;
 
 }
