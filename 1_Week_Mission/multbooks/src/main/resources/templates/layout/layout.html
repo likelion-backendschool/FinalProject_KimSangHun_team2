@@ -17,6 +17,23 @@
     <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
     <!-- 폰트어썸 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <!--폰트설정-->
+    <style>
+        @font-face {
+            font-family: 'GmarketSansMedium';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        html > body {
+            font-family: "GmarketSansMedium";
+            text-underline-position: under;
+        }
+    </style>
+    <!--toastr-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <title>Title</title>
 
@@ -70,5 +87,16 @@
         </li>
     </ul>
 </footer>
+<!--success modal  기능-->
+<script src="/resource/common/common.js"></script>
+
+<script th:inline="javascript">
+    const msg = /*[[ ${msg} ]]*/ null;
+
+    if (msg) {
+        successModal(msg);
+    }
+
+</script>
 </body>
 </html>

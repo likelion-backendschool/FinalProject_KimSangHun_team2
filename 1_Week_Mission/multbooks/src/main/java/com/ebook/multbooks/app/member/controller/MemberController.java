@@ -3,6 +3,7 @@ package com.ebook.multbooks.app.member.controller;
 import com.ebook.multbooks.app.member.dto.JoinFormDto;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.util.Util;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,7 +65,7 @@ public class MemberController {
         }
 
        memberService.join(username,encodedPassword,email,nickname);
-        return "redirect:/?msg=join_success";
+        return "redirect:/?msg="+ Util.url.encode("회원가입 성공!");
     }
     /**
      * 로그인 폼으로 이동

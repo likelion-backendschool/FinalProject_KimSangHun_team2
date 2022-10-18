@@ -1,6 +1,7 @@
 package com.ebook.multbooks.app.security;
 
 import com.ebook.multbooks.app.security.handler.CustomAuthFailureHandler;
+import com.ebook.multbooks.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,7 @@ public class SecurityConfig{
                         formLogin -> formLogin
                                 .loginPage("/member/login")
                                 .loginProcessingUrl("/member/login")
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/?msg="+ Util.url.encode("로그인 성공"))
                                 .failureHandler(customAuthFailureHandler)
                 )
                 .logout(
