@@ -24,16 +24,16 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests(
-                authorizeRequests -> authorizeRequests
-                        .antMatchers("/","/member/join").permitAll()
-                        .anyRequest().authenticated()
-        )
                 .formLogin(
-                formLogin->formLogin
-                        .loginPage("/member/login")
-                        .loginProcessingUrl("/member/login")
-        );
+                        formLogin -> formLogin
+                                .loginPage("/member/login")
+                                .loginProcessingUrl("/member/login")
+                )
+                .logout(
+                        logout -> logout
+                                .logoutUrl("/member/logout")
+                );
+
         return http.build();
     }
     @Bean
