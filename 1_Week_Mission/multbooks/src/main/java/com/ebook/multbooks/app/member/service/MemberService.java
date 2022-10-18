@@ -63,4 +63,9 @@ public class MemberService {
     public void modify(Member member, String email, String nickname) {
          member.update(email,nickname);
     }
+
+    @Transactional
+    public void modifyPassword(Member member, String password) {
+        member.updatePassword(password);
+    }
 }

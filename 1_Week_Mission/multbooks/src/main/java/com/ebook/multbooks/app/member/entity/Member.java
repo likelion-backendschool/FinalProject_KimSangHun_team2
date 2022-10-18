@@ -31,7 +31,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private AuthLevel authLevel;
 
-    public Member update(String email, String nickname) {
+    public void update(String email, String nickname) {
         this.email=email;
         if(this.nickname.equals("")&&!nickname.equals("")){
             this.authLevel=AuthLevel.AUTHOR;
@@ -40,6 +40,9 @@ public class Member extends BaseEntity {
             this.authLevel=AuthLevel.USER;
         }
         this.nickname=nickname;
-        return this;
+    }
+
+    public void updatePassword(String password) {
+        this.password=password;
     }
 }

@@ -115,4 +115,34 @@ public class MemberController {
 
         return "redirect:/?msg="+ Util.url.encode("프로필수정 완료!");
     }
+    /**
+     * 비밀번호 변경 폼으로 이동
+     * */
+    @GetMapping("/modifyPassword")
+    public String modifyPasswordForm(){
+        return "/member/modifyPwForm";
+    }
+
+
+    /**
+     * 비밀번호 변경
+     * @param  context 로그인된 회원정보
+     * @param  password 변경될 비밀번호 입력값
+     *@param  oripassword  변경전 기존 비밀번호 입력값
+     * */
+    @PostMapping("/modifyPassword")
+    public  String modifyPassword(@AuthenticationPrincipal MemberContext context,String password,String oriPassword,Model model){
+
+        String encodedPassword=passwordEncoder.encode(password);
+        Member member=memberService.getMemberById(context.getId());
+
+        //변경전 입력하는 기존 비밀번호 가 일치하는지 확인
+        if(!passwordEncoder.matches(oriPassword,member.getPassword())){
+            model.addAttribute("error","비밀번호가 일치 하지 않습니다.");
+            return "/member/modifyPwForm";
+        }
+
+        memberService.modifyPassword(member,encodedPassword);
+        return "redirect:/?msg="+ Util.url.encode("비밀번호 변경 완료!");
+    }
 }
