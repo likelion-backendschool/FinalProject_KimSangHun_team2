@@ -6,7 +6,10 @@
 </head>
 <body>
 <main layout:fragment="main">
-   <p th:text="${msg}"></p>
+    <p th:text="${msg}"></p>
+    <!--로그인정보 출력 해보기-->
+    <p th:text="${#authentication.name}"></p>
+    <p th:text="${#authentication.authorities}"></p>
 </main>
 </body>
 </html>

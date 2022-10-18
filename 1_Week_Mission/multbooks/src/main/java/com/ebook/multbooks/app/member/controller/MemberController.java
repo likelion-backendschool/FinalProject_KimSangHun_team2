@@ -24,9 +24,11 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
+
     /**
      * 회원가입 폼으로 이동
      * */
+
     @GetMapping("/join")
     @PreAuthorize("isAnonymous()")
     public String joinForm(Model model){
@@ -34,9 +36,11 @@ public class MemberController {
         model.addAttribute("form",form);
         return "member/joinForm";
     }
+
     /**
-     * 회원가입 요청 실행
+     * 회원가입 요청 처리
      * */
+
     @PostMapping("/join")
     @PreAuthorize("isAnonymous()")
     public String join(@Valid @ModelAttribute("form") JoinFormDto joinFormDto, BindingResult bindingResult,Model model){
@@ -61,6 +65,17 @@ public class MemberController {
 
        memberService.join(username,encodedPassword,email,nickname);
         return "redirect:/?msg=join_success";
+    }
+    /**
+     * 로그인 폼으로 이동
+     * */
+    @GetMapping("/login")
+    @PreAuthorize("isAnonymous()")
+    public String loginForm(@RequestParam(required = false )String error, Model model){
+        if(error!=null){
+            model.addAttribute("error",error);
+        }
+        return "/member/loginForm";
     }
 
 }

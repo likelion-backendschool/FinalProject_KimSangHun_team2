@@ -1,5 +1,6 @@
 package com.ebook.multbooks.app.security;
 
+import com.ebook.multbooks.app.security.handler.CustomAuthFailureHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ import javax.management.MXBean;
 @EnableGlobalMethodSecurity(prePostEnabled = true)//특정메서드기반 security 사용시 필요
 @RequiredArgsConstructor
 public class SecurityConfig{
-
+    private final CustomAuthFailureHandler customAuthFailureHandler;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -28,6 +29,8 @@ public class SecurityConfig{
                         formLogin -> formLogin
                                 .loginPage("/member/login")
                                 .loginProcessingUrl("/member/login")
+                                .defaultSuccessUrl("/")
+                                .failureHandler(customAuthFailureHandler)
                 )
                 .logout(
                         logout -> logout
