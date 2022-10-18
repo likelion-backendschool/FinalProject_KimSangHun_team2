@@ -18,10 +18,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 /**
  * 회원 관련 컨테이너
  * */
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -33,7 +33,6 @@ public class MemberController {
     /**
      * 회원가입 폼으로 이동
      * */
-
     @GetMapping("/join")
     @PreAuthorize("isAnonymous()")
     public String joinForm(Model model){
@@ -45,7 +44,6 @@ public class MemberController {
     /**
      * 회원가입 요청 처리
      * */
-
     @PostMapping("/join")
     @PreAuthorize("isAnonymous()")
     public String join(@Valid @ModelAttribute("form") JoinFormDto joinFormDto, BindingResult bindingResult,Model model){
@@ -71,6 +69,7 @@ public class MemberController {
        memberService.join(username,encodedPassword,email,nickname);
         return "redirect:/?msg="+ Util.url.encode("회원가입 성공!");
     }
+
     /**
      * 로그인 폼으로 이동
      * */
@@ -83,6 +82,9 @@ public class MemberController {
         return "/member/loginForm";
     }
 
+    /**
+     * 수정 폼으로 이동
+     * */
     @GetMapping("/modify")
     @PreAuthorize("isAuthenticated()")
     public String modifyForm(){
