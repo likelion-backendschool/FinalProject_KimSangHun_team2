@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.management.MXBean;
 
@@ -36,6 +37,8 @@ public class SecurityConfig{
                 .logout(
                         logout -> logout
                                 .logoutUrl("/member/logout")
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))//logout get 요청으로 받을수 있도록 해줌
+                                . logoutSuccessUrl("/")
                 );
 
         return http.build();
