@@ -8,6 +8,7 @@ import com.ebook.multbooks.app.post.service.PostService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.util.Util;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,13 +28,23 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final MemberService memberService;
+    /**
+     * 글 작성 폼으로 이동
+     * */
     @GetMapping("/write")
+    @PreAuthorize("isAuthenticated()")
     public String postWriteForm(Model model){
         model.addAttribute("form",new WriteFormDto());
         return "/post/writeForm";
     }
+
+    /**
+     * 글 작성
+     *
+     * */
     @PostMapping("/write")
-    public String postWriteForm(@AuthenticationPrincipal MemberContext context, @Valid @ModelAttribute("form") WriteFormDto writeFormDto, BindingResult bindingResult){
+    @PreAuthorize("isAuthenticated()")
+    public String postWrite(@AuthenticationPrincipal MemberContext context, @Valid @ModelAttribute("form") WriteFormDto writeFormDto, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
             return "/post/writeForm";
