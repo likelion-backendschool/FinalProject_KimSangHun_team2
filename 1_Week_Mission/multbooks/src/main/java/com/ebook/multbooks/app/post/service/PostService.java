@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +35,9 @@ public class PostService {
         );
 
         return post;
+    }
+
+    public List<Post> getAllPosts() {
+        return postRepository.getAllPostsOrderByUpdateDate();
     }
 }

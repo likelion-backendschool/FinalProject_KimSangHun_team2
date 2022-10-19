@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.post.controller;
 
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.post.dto.PostListDto;
 import com.ebook.multbooks.app.post.dto.WriteFormDto;
 import com.ebook.multbooks.app.post.entity.Post;
 import com.ebook.multbooks.app.post.service.PostService;
@@ -63,5 +64,24 @@ public class PostController {
         Member member=memberService.getMemberById(context.getId());
         Post post=postService.writePost(member,subject,content,contentHtml,keywords);
         return "redirect:/?msg="+ Util.url.encode("%d번 글이 작성 되었습니다!".formatted(post.getId()));
+    }
+
+    /**
+     * 글 모두 보기
+     * */
+    @GetMapping("/list")
+    public String list(Model model){
+    List<Post> posts=postService.getAllPosts();
+    //dto 로 변경해서 뷰에 전달
+    List<PostListDto>postListDtos=posts.stream().map(post ->PostListDto.builder()
+            .id(post.getId())
+            .subject(post.getSubject())
+            .nickname(post.getMember().getNickname())
+            .createDate(post.getCreateDate())
+            .updateDate(post.getUpdateDate())
+            .build()).toList();
+
+    model.addAttribute("posts",postListDtos);
+    return "/post/list";
     }
 }
