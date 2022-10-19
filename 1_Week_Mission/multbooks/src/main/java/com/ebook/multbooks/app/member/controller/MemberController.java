@@ -52,6 +52,7 @@ public class MemberController {
         if(bindingResult.hasErrors()){
             return "member/joinForm";
         }
+
         //비밀번호와 비밀번호 확인이 일치하지 않는경우
         if(!joinFormDto.getPassword().equals(joinFormDto.getPasswordConfirm())){
             model.addAttribute("join_error","비밀번호 가 일치하지 않습니다!");
@@ -132,6 +133,7 @@ public class MemberController {
      * 비밀번호 변경 폼으로 이동
      * */
     @GetMapping("/modifyPassword")
+    @PreAuthorize("isAuthenticated()")
     public String modifyPasswordForm(){
         return "/member/modifyPwForm";
     }
@@ -141,9 +143,10 @@ public class MemberController {
      * 비밀번호 변경
      * @param  context 로그인된 회원정보
      * @param  password 변경될 비밀번호 입력값
-     *@param  oripassword  변경전 기존 비밀번호 입력값
+     *@param  oldpassword  변경전 기존 비밀번호 입력값
      * */
     @PostMapping("/modifyPassword")
+    @PreAuthorize("isAuthenticated()")
     public  String modifyPassword(@AuthenticationPrincipal MemberContext context,String password,String oldPassword,Model model){
 
         String encodedPassword=passwordEncoder.encode(password);
@@ -158,4 +161,42 @@ public class MemberController {
         memberService.modifyPassword(member,encodedPassword);
         return "redirect:/?msg="+ Util.url.encode("비밀번호 변경 완료!");
     }
+
+    /**
+     * 아이디 찾기 폼으로 이동
+     *
+     * */
+    @GetMapping("/findUsername")
+    @PreAuthorize("isAnonymous()")
+    public String findUsernameForm(){
+        return "/member/findUsernameForm";
+    }
+
+    /**
+     * 아이디 찾기
+     *
+     *
+     * */
+    @PostMapping("/findUsername")
+    @PreAuthorize("isAnonymous()")
+    public String findUsername(@RequestParam(defaultValue = "") String email,Model model){
+        //email 입력이 비어있는경우
+        if(email.equals("")){
+            model.addAttribute("findUsername_error","이메일을 입력해주세요!");
+            return "/member/findUsernameForm";
+        }
+
+        Member member=memberService.getMemberByEmail(email);
+        //입력된 email 에 해당되는 member 가 없는경우
+        if(member==null){
+            model.addAttribute("findUsername_error","회원이 존재하지 않습니다.");
+            return "/member/findUsernameForm";
+        }
+
+
+        String findUsername=member.getUsername();
+        model.addAttribute("find_username",findUsername);
+        return "/member/findUsernameForm";
+    }
+
 }
