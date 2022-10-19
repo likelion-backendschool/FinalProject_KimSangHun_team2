@@ -72,4 +72,8 @@ public class MemberService {
     public Member getMemberByUsername(String username) {
         return memberRepository.findByUsername(username).orElse(null);
     }
+
+    public Member getMemberByUsernameAndEmail(String username, String email) {
+        return memberRepository.findByUsernameAndEmail(username,email).orElse(null);
+    }
 }

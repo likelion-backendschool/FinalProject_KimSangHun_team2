@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: dev,secret
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:

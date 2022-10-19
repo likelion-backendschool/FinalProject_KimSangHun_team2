@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.util.Util;
+import com.ebook.multbooks.util.smtp.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
+
+    private final EmailService emailService;
 
     /**
      * 회원가입 폼으로 이동
@@ -143,7 +146,7 @@ public class MemberController {
      * 비밀번호 변경
      * @param  context 로그인된 회원정보
      * @param  password 변경될 비밀번호 입력값
-     *@param  oldpassword  변경전 기존 비밀번호 입력값
+     *@param  oldPassword  변경전 기존 비밀번호 입력값
      * */
     @PostMapping("/modifyPassword")
     @PreAuthorize("isAuthenticated()")
@@ -175,7 +178,6 @@ public class MemberController {
     /**
      * 아이디 찾기
      *
-     *
      * */
     @PostMapping("/findUsername")
     @PreAuthorize("isAnonymous()")
@@ -199,4 +201,51 @@ public class MemberController {
         return "/member/findUsernameForm";
     }
 
+    /**
+     * 비밀번호 찾기 폼으로 이동
+     * */
+
+    @GetMapping("/findPassword")
+    @PreAuthorize("isAnonymous()")
+    public String findPasswordForm(){
+        return "/member/findPasswordForm";
+    }
+
+    /**
+     * 비밀번호 찾고 재발급
+     * */
+
+    @PostMapping("/findPassword")
+    @PreAuthorize("isAnonymous()")
+    public String findPassword(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "")String email,Model model){
+       //아이디가 비어있는경우
+        if (username.equals("")) {
+            model.addAttribute("findPassword_error","아이디를 입력해 주세요");
+            return "/member/findPasswordForm";
+        }
+        //이메일이 비어있는 경우
+        if (email.equals("")) {
+            model.addAttribute("findPassword_error","이메일을 입력해 주세요");
+            return "/member/findPasswordForm";
+        }
+
+        Member member=memberService.getMemberByUsernameAndEmail(username,email);
+
+        //회원이 존재 하지 않는경우
+        if(member==null){
+            model.addAttribute("findPassword_error","회원이 존재하지 않습니다.");
+            return "/member/findPasswordForm";
+        }
+        //랜덤 임시 비밀번호 발급
+        String temporalPassword=emailService.makeRandomPw();
+        String encodedPassword= passwordEncoder.encode(temporalPassword);
+
+        //비밀번호 수정
+        memberService.modifyPassword(member,encodedPassword);
+
+        //임시 비밀번호 메일로 발송
+        emailService.sendEmail(member.getEmail(),"멋북스 임시 비밀번호","임시 비밀번호 :"+temporalPassword);
+
+        return "redirect:/?msg="+Util.url.encode("임시 비밀번호가 발급되었습니다!!");
+    }
 }
