@@ -83,7 +83,8 @@ public class MemberController {
             return "member/joinForm";
         }
 
-       memberService.join(username,encodedPassword,email,nickname);
+        Member member=memberService.join(username,encodedPassword,email,nickname);
+        emailService.sendEmail(member.getEmail(),"회원가입을 축하드립니다!","\uD83C\uDF89\uD83C\uDF89 회원가입을 축하드려요!! \uD83C\uDF89\uD83C\uDF89");
         return "redirect:/?msg="+ Util.url.encode("회원가입 성공!");
     }
 
