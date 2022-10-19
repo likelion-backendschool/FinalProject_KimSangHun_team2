@@ -68,4 +68,8 @@ public class MemberService {
     public void modifyPassword(Member member, String password) {
         member.updatePassword(password);
     }
+
+    public Member getMemberByUsername(String username) {
+        return memberRepository.findByUsername(username).orElse(null);
+    }
 }

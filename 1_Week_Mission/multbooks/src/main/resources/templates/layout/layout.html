@@ -105,7 +105,11 @@
     if (msg) {
         successModal(msg);
     }
+     const join_error= /*[[ ${join_error} ]]*/ null;
 
+     if (join_error) {
+            errorModal(join_error);
+     }
 </script>
 </body>
 </html>

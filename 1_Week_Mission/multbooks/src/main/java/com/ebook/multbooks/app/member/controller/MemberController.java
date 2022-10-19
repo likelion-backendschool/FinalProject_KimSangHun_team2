@@ -52,6 +52,11 @@ public class MemberController {
         if(bindingResult.hasErrors()){
             return "member/joinForm";
         }
+        //비밀번호와 비밀번호 확인이 일치하지 않는경우
+        if(!joinFormDto.getPassword().equals(joinFormDto.getPasswordConfirm())){
+            model.addAttribute("join_error","비밀번호 가 일치하지 않습니다!");
+            return "member/joinForm";
+        }
 
         String email=joinFormDto.getEmail();
         String password=joinFormDto.getPassword();
@@ -59,11 +64,19 @@ public class MemberController {
         String username=joinFormDto.getUsername();
 
         String encodedPassword=passwordEncoder.encode(password);
-        Member oldMember=memberService.getMemberByEmail(email);
+        Member oldMemberByEmail=memberService.getMemberByEmail(email);
+        Member oldMemberByUsername=memberService.getMemberByUsername(username);
 
-        //이미 회원 가입 되었있는 경우
-        if(oldMember!=null){
-            return "redirect:/?msg=Already_joined";
+        //이미 가입된 username 인 경우
+        if(oldMemberByUsername!=null){
+            model.addAttribute("join_error","이미 가입되어 있는 아이디 입니다!");
+            return "member/joinForm";
+        }
+
+        //이미 가입된 email 인 경우
+        if(oldMemberByEmail!=null){
+            model.addAttribute("join_error","이미 가입되어 있는 이메일 입니다!");
+            return "member/joinForm";
         }
 
        memberService.join(username,encodedPassword,email,nickname);
