@@ -1,5 +1,6 @@
 package com.ebook.multbooks.app.posthashtag.service;
 
+import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.post.entity.Post;
 import com.ebook.multbooks.app.posthashtag.entity.PostHashTag;
 import com.ebook.multbooks.app.posthashtag.repository.PostHashTagRepository;
@@ -23,7 +24,7 @@ public class PostHashTagService {
     private final PostKeywordService postKeywordService;
     private final PostHashTagRepository postHashTagRepository;
 
-    public PostHashTag saveHashTag(Post post, String hashTag) {
+    public PostHashTag saveHashTag(Member member, Post post, String hashTag) {
         //PostKeyword 객체 생성
         PostKeyword postKeyword=postKeywordService.saveKeyword(hashTag);
 
@@ -32,6 +33,7 @@ public class PostHashTagService {
                 .builder()
                 .post(post)
                 .postKeyword(postKeyword)
+                .member(member)
                 .build();
 
         return  postHashTagRepository.save(postHashTag);

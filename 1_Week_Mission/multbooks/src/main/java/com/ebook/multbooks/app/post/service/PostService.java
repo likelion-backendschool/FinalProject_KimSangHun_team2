@@ -31,7 +31,7 @@ public class PostService {
 
         //연관 관계에는 1개의 post 와 1개의 hashtag(=keyword) 가 필요
         Arrays.stream(hashTags).forEach(
-                hashTag-> postHashTagService.saveHashTag(post,hashTag)
+                hashTag-> postHashTagService.saveHashTag(member,post,hashTag)
         );
 
         return post;
