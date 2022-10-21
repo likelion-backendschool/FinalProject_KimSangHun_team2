@@ -43,7 +43,7 @@ public class MemberService {
                     .email(email)
                     .username(username)
                     .password(password)
-                    .nickname(null)
+                    .nickname("")
                     .authLevel(AuthLevel.USER)
                     .build();
         }

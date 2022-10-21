@@ -119,7 +119,7 @@ public class MemberController {
      * */
     @PostMapping("/modify")
     @PreAuthorize("isAuthenticated()")
-    public String modify(@AuthenticationPrincipal MemberContext context, String email, String nickname){
+    public String modify(@AuthenticationPrincipal MemberContext context, String email, @RequestParam(required = false) String nickname){
 
         Member member=memberService.getMemberById(context.getId());
 
