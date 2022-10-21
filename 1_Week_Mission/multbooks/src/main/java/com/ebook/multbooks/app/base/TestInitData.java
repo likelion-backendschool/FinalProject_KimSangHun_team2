@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@Profile("dev")
-public class DevInitData {
+@Profile("test")
+public class TestInitData {
     @Bean
     CommandLineRunner init(MemberService memberService, PasswordEncoder passwordEncoder, PostService postService){
        return args -> {
