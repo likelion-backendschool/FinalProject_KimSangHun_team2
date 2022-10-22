@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Post 와 PostKeyword
@@ -40,5 +41,13 @@ public class PostHashTagService {
                 .build();
 
         return  postHashTagRepository.save(postHashTag);
+    }
+
+
+    public List<PostKeyword> deletePostHashTags(Post post) {
+        List<PostHashTag> postHashTags=postHashTagRepository.findByPost(post);
+        List<PostKeyword> postKeywords=postHashTags.stream().map(postHashTag -> postHashTag.getPostKeyword()).collect(Collectors.toList());
+        postHashTagRepository.deleteByPost(post);
+       return postKeywords;
     }
 }

@@ -22,9 +22,9 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
-    private Member member;
+    private Member author;
 
-    public void updateMember(Member member) {
-        this.member=member;
+    public void updateAuthor(Member author) {
+        this.author=author;
     }
 }

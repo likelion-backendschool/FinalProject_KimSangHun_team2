@@ -32,7 +32,7 @@ public class PostMapperTest {
             return;
         }
         PostListDto postListDto =postMapper.postToPostListDto(post);
-        assertThat(postListDto.getNickname()).isEqualTo(post.getMember().getNickname());
+        assertThat(postListDto.getNickname()).isEqualTo(post.getAuthor().getNickname());
     }
 
     @Test

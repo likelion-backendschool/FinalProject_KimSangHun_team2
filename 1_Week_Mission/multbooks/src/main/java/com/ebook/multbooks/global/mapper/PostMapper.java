@@ -18,7 +18,7 @@ import java.util.List;
 public interface PostMapper {
 
 
-    @Mapping(target = "nickname",source = "member.nickname")//연관관계인 컬럼과 연결
+    @Mapping(target = "nickname",source = "author.nickname")//연관관계인 컬럼과 연결
     PostListDto postToPostListDto(Post post);
 
     List<PostListDto> postsToPosListDtos(List<Post> posts);

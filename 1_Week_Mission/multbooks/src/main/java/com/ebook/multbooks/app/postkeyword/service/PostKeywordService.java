@@ -35,4 +35,8 @@ public class PostKeywordService {
 
         return  postKeywordRepository.save(postKeyword);
     }
+
+    public void deletePostKeyWords(List<PostKeyword> postKeywords) {
+      postKeywords.stream().forEach(postKeyword -> postKeywordRepository.delete(postKeyword));
+    }
 }

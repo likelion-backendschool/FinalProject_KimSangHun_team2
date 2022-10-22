@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.post.dto.PostListDto;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
 import com.ebook.multbooks.app.post.entity.Post;
+import com.ebook.multbooks.app.post.exception.AuthorCanNotRemoveException;
 import com.ebook.multbooks.app.post.service.PostService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.global.mapper.PostMapper;
@@ -15,10 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -63,7 +61,7 @@ public class PostController {
      * 글 모두 보기
      * */
     @GetMapping("/list")
-    public String list(Model model){
+    public String postList(Model model){
 
     List<Post> posts=postService.getAllPosts();
 
@@ -72,5 +70,16 @@ public class PostController {
 
     model.addAttribute("posts",postListDtos);
     return "/post/list";
+    }
+
+    @GetMapping("/{id}/delete")
+    public String postDelete(@AuthenticationPrincipal MemberContext context,@PathVariable Long id){
+        Post post=postService.getPostById(id);
+        Member author=memberService.getMemberByUsername(context.getUsername());
+        if(postService.authorCanRemove(author,post)==false){
+            throw new AuthorCanNotRemoveException("글을 삭제할 권한이 없습니다.");
+        }
+        postService.deletePost(post);
+        return "redirect:/post/list";
     }
 }
