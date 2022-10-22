@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,5 +34,11 @@ public class PostServiceTest {
     public void t2(){
         Post post=postService.writePost("user1",new PostWriteForm("제목1","내용1","내용1","#테스트 #입니다"));
          assertThat(postService.getAllPosts().size()).isGreaterThanOrEqualTo(3);
+    }
+    @Test
+    @DisplayName("글 삭제 테스트")
+    public void t3(){
+        Post post=postService.writePost("user1",new PostWriteForm("제목1","내용1","내용1","#테스트 #입니다"));
+        postService.deletePost(post);
     }
 }
