@@ -7,6 +7,7 @@ import com.ebook.multbooks.app.post.dto.WriteFormDto;
 import com.ebook.multbooks.app.post.entity.Post;
 import com.ebook.multbooks.app.post.service.PostService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
+import com.ebook.multbooks.global.mapper.PostMapper;
 import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,8 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final MemberService memberService;
+
+    private final PostMapper postMapper;
     /**
      * 글 작성 폼으로 이동
      * */
@@ -71,15 +74,11 @@ public class PostController {
      * */
     @GetMapping("/list")
     public String list(Model model){
+
     List<Post> posts=postService.getAllPosts();
-    //dto 로 변경해서 뷰에 전달
-    List<PostListDto>postListDtos=posts.stream().map(post ->PostListDto.builder()
-            .id(post.getId())
-            .subject(post.getSubject())
-            .nickname(post.getMember().getNickname())
-            .createDate(post.getCreateDate())
-            .updateDate(post.getUpdateDate())
-            .build()).toList();
+
+    //postMapper 사용해서 post 들을 postListDto 들로 변경
+    List<PostListDto>postListDtos=postMapper.postsToPosListDtos(posts);
 
     model.addAttribute("posts",postListDtos);
     return "/post/list";
