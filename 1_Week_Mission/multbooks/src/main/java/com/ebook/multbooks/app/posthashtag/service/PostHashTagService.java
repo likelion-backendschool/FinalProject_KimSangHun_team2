@@ -11,6 +11,9 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Post 와 PostKeyword
  * 사이의 연관관계를
@@ -21,13 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostHashTagService {
-    private final PostKeywordService postKeywordService;
     private final PostHashTagRepository postHashTagRepository;
 
-    public PostHashTag saveHashTag(Member member, Post post, String hashTag) {
-        //PostKeyword 객체 생성
-        PostKeyword postKeyword=postKeywordService.saveKeyword(hashTag);
+    public void saveHashTags(Member member, Post post, List<PostKeyword> postKeywords){
+       postKeywords.stream().forEach(postKeyword -> saveHashTag(member,post,postKeyword));
+    }
 
+    public PostHashTag saveHashTag(Member member, Post post,PostKeyword postKeyword) {
         //Post 와 PostKeyword 의 연관관계를 PostHashTag 로 저장
         PostHashTag postHashTag=PostHashTag
                 .builder()

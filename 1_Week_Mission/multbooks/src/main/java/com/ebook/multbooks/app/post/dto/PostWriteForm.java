@@ -1,11 +1,15 @@
 package com.ebook.multbooks.app.post.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
-public class WriteFormDto {
+@Getter
+@Setter
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
+public class PostWriteForm {
     @NotBlank(message = "제목을 입력해주세요")
     private String subject;
 

@@ -1,6 +1,7 @@
 package com.ebook.multbooks.global.mapper;
 
 import com.ebook.multbooks.app.post.dto.PostListDto;
+import com.ebook.multbooks.app.post.dto.PostWriteForm;
 import com.ebook.multbooks.app.post.entity.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,5 +22,7 @@ public interface PostMapper {
     PostListDto postToPostListDto(Post post);
 
     List<PostListDto> postsToPosListDtos(List<Post> posts);
+
+    Post postWriteFormToPost(PostWriteForm postWriteForm);
 
 }

@@ -23,4 +23,8 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private Member member;
+
+    public void updateMember(Member member) {
+        this.member=member;
+    }
 }
