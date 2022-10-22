@@ -7,7 +7,7 @@ import com.ebook.multbooks.app.post.dto.WriteFormDto;
 import com.ebook.multbooks.app.post.entity.Post;
 import com.ebook.multbooks.app.post.service.PostService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
-import com.ebook.multbooks.util.Util;
+import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

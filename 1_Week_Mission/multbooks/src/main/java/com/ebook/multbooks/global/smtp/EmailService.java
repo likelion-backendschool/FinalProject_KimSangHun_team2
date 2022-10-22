@@ -1,4 +1,4 @@
-package com.ebook.multbooks.util.smtp;
+package com.ebook.multbooks.global.smtp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailSender;

@@ -1,7 +1,7 @@
 package com.ebook.multbooks.app.security;
 
 import com.ebook.multbooks.app.security.handler.CustomAuthFailureHandler;
-import com.ebook.multbooks.util.Util;
+import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

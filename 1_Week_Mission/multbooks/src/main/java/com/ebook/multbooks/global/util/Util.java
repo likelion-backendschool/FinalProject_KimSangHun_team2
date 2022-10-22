@@ -1,4 +1,4 @@
-package com.ebook.multbooks.util;
+package com.ebook.multbooks.global.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
