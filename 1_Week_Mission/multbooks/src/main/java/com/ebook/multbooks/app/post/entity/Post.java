@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.post.entity;
 
 import com.ebook.multbooks.app.base.entity.BaseEntity;
 import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -26,5 +27,11 @@ public class Post extends BaseEntity {
 
     public void updateAuthor(Member author) {
         this.author=author;
+    }
+
+    public void modify(PostModifyForm postModifyForm) {
+        subject=postModifyForm.getSubject();
+        content=postModifyForm.getContent();
+        contentHtml=postModifyForm.getContentHtml();
     }
 }

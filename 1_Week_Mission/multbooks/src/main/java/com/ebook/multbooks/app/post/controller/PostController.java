@@ -3,8 +3,10 @@ package com.ebook.multbooks.app.post.controller;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.post.dto.PostListDto;
+import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
 import com.ebook.multbooks.app.post.entity.Post;
+import com.ebook.multbooks.app.post.exception.AuthorCanNotModifyException;
 import com.ebook.multbooks.app.post.exception.AuthorCanNotRemoveException;
 import com.ebook.multbooks.app.post.service.PostService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
@@ -82,4 +84,24 @@ public class PostController {
         postService.deletePost(post);
         return "redirect:/post/list";
     }
+    @GetMapping("/{id}/modify")
+    public String postModifyForm(@PathVariable Long id,Model model){
+        PostModifyForm postModifyForm=postService.getPostModifyFormById(id);
+        model.addAttribute("form",postModifyForm);
+        return "post/modifyForm";
+    }
+    @PostMapping("/{id}/modify")
+    public String postModify(@AuthenticationPrincipal MemberContext context, @PathVariable Long id, @Valid @ModelAttribute("form") PostModifyForm postModifyForm,BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "post/modifyForm";
+        }
+        Post post=postService.getPostById(id);
+        Member author=memberService.getMemberByUsername(context.getUsername());
+        if(postService.authorCanRemove(author,post)==false){
+            throw new AuthorCanNotModifyException("글을 수정할 권한이 없습니다.");
+        }
+        postService.modifyPost(post,postModifyForm);
+        return "redirect:/post/list";
+    }
+
 }

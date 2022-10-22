@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.post.service;
 
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
 import com.ebook.multbooks.app.post.entity.Post;
 import com.ebook.multbooks.app.post.exception.PostNotFoundException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,16 +64,25 @@ public class PostService {
         return author.getId().equals(post.getAuthor().getId());
     }
 
-    /**
-     * 글 삭제시
-     * postHashTag ->postKeyword->post 순으로 삭제
-     * postHashTag 삭제전에 연관된 postKeyword 값을 저장해서 return
-     *
-     * */
+
     @Transactional
     public void deletePost(Post post) {
-        List<PostKeyword> postKeywords=postHashTagService.deletePostHashTags(post);
-        postKeywordService.deletePostKeyWords(postKeywords);
+        postHashTagService.deletePostHashTags(post);
         postRepository.delete(post);
+    }
+
+    public PostModifyForm getPostModifyFormById(Long id) {
+        Post post=getPostById(id);
+        List<PostKeyword>postKeywords=postHashTagService.getPostKeywords(post);
+        PostModifyForm postModifyForm= postMapper.postToPostModifyForm(post);
+        String hashTag= postKeywords.stream().map(postKeyword -> "#"+postKeyword.getContent()).collect(Collectors.joining(" "));
+        postModifyForm.setHashtag(hashTag);
+        return postModifyForm;
+    }
+
+    @Transactional
+    public void modifyPost(Post post, PostModifyForm postModifyForm) {
+        post.modify(postModifyForm);
+        postHashTagService.modifyPostHashTagAndPostKeyword(post,postModifyForm.getHashtag());
     }
 }

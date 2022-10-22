@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,16 +28,21 @@ public class PostKeywordService {
         return postKeywordList;
     }
 
-    public PostKeyword saveKeyword(String keyword){
+    /**
+     * 저장 하기 전에 content 값이 일치하는 keyword 가 있으면 return
+     * Keyword 가 unique 하게 유지되도록 해줌
+     * */
+    public PostKeyword saveKeyword(String content){
+        //수정시 보통 사용됨
+        Optional<PostKeyword> optKeyword=postKeywordRepository.findByContent(content);
+        if(optKeyword.isPresent()){
+            return optKeyword.get();
+        }
         PostKeyword postKeyword =PostKeyword
                 .builder()
-                .content(keyword)
+                .content(content)
                 .build();
 
         return  postKeywordRepository.save(postKeyword);
-    }
-
-    public void deletePostKeyWords(List<PostKeyword> postKeywords) {
-      postKeywords.stream().forEach(postKeyword -> postKeywordRepository.delete(postKeyword));
     }
 }
