@@ -18,6 +18,12 @@ import static com.ebook.multbooks.app.postkeyword.entity.QPostKeyword.postKeywor
 @RequiredArgsConstructor
 public class PostKeywordRepositoryImpl implements PostKeywordRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
+    /**
+     *
+     * 로그인한 사람의 글의 키워드들을 가져오는 메소드
+     * groupBy 를 이용해서  키워드의 hashTag 개수를
+     * 같이 구해서 keyword 에 저장
+     * */
     @Override
     public List<PostKeyword> getKeywordByMemberIdQsl(Long loginMemberId) {
        List<Tuple> fetch=jpaQueryFactory
