@@ -32,6 +32,7 @@ public class PostController {
     private final MemberService memberService;
 
     private final PostMapper postMapper;
+
     /**
      * 글 작성 폼으로 이동
      * */
@@ -74,22 +75,36 @@ public class PostController {
     return "/post/list";
     }
 
+    /**
+     * 글 삭제
+     * */
     @GetMapping("/{id}/delete")
     public String postDelete(@AuthenticationPrincipal MemberContext context,@PathVariable Long id){
         Post post=postService.getPostById(id);
         Member author=memberService.getMemberByUsername(context.getUsername());
+
+        //글작성자와 로그인한 회원이 일치하지 않는다면
         if(postService.authorCanRemove(author,post)==false){
             throw new AuthorCanNotRemoveException("글을 삭제할 권한이 없습니다.");
         }
+
         postService.deletePost(post);
         return "redirect:/post/list";
     }
+
+    /**
+     * 글 수정 폼으로 이동
+     * */
     @GetMapping("/{id}/modify")
     public String postModifyForm(@PathVariable Long id,Model model){
         PostModifyForm postModifyForm=postService.getPostModifyFormById(id);
         model.addAttribute("form",postModifyForm);
         return "post/modifyForm";
     }
+
+    /**
+     * 글 수정
+     * */
     @PostMapping("/{id}/modify")
     public String postModify(@AuthenticationPrincipal MemberContext context, @PathVariable Long id, @Valid @ModelAttribute("form") PostModifyForm postModifyForm,BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -97,6 +112,7 @@ public class PostController {
         }
         Post post=postService.getPostById(id);
         Member author=memberService.getMemberByUsername(context.getUsername());
+        //글작성자와 로그인한 회원이 일치하지 않는다면
         if(postService.authorCanRemove(author,post)==false){
             throw new AuthorCanNotModifyException("글을 수정할 권한이 없습니다.");
         }

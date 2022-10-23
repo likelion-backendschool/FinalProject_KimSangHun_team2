@@ -66,23 +66,35 @@ public class PostHashTagService {
      * */
     @Transactional
     public void modifyPostHashTagAndPostKeyword(Post post, String hashtag) {
+
+        //글과 연결된 postHashTag 가져오기
         List<PostHashTag> oldPostHashTags=getPostHashTags(post);
+
+        //수정에 입력된 값 keyword 로 분리
         String[] postKeywords= Util.str.makeKeywords(hashtag);
+
+        //삭제된 keyword 와 연결된 posHashTag 저장
         List<PostHashTag> needToDelete=new ArrayList<>();
 
+        //2중 반복문으로 탐색
         for(PostHashTag oldPostHashTag: oldPostHashTags){
             boolean isContain= Arrays.stream(postKeywords).anyMatch(postKeyword->postKeyword.equals(oldPostHashTag.getPostKeyword().getContent()));
             if(isContain==false){
                 needToDelete.add(oldPostHashTag);
             }
         }
+
+        //삭제
         needToDelete.stream().forEach(postHashTag -> postHashTagRepository.delete(postHashTag));
+
+        //새로운 postHashTag 생성
         Arrays.stream(postKeywords).forEach(postKeyword->savePostHashTag(post,postKeyword));
     }
     @Transactional
     private PostHashTag savePostHashTag(Post post, String postKeywordContent) {
 
         PostKeyword postKeyword=postKeywordService.saveKeyword(postKeywordContent);
+
         //이미 존재하는 hashTag 인지 postId,postKeywordId 로 확인
         Optional<PostHashTag> opPostHashTag=postHashTagRepository.findByPostIdAndPostKeywordId(post.getId(),postKeyword.getId());
 
