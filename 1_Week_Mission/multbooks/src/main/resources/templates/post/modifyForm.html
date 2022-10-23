@@ -7,8 +7,8 @@
 <body>
 <main layout:fragment="main">
     <div class="px-24 py-24 flex-grow border-2 border-blue-200">
-        <form method="post" th:object="${form}" onsubmit="writeForm__submit(this); return false;" th:action >
-            <h3 class="text-3xl font-bold mb-6 dark:text-white">글 작성</h3>
+        <form method="post" th:object="${form}" onsubmit="modifyForm__submit(this); return false;" th:action >
+            <h3 class="text-3xl font-bold mb-6 dark:text-white">글  수정</h3>
 
             <div class="mb-6">
                 <label for="subject" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">제목</label>
@@ -28,13 +28,13 @@
                 <p th:if="${#fields.hasErrors('hashtag')}" th:errors="*{hashtag}" class="font-medium text-sm text-blue-700"></p>
             </div>
 
-            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">글 작성</button>
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">수정</button>
         </form>
     </div>
 
     <script>
 
-         function writeForm__submit(form) {
+         function modifyForm__submit(form) {
             form.content.value=editor.getMarkdown();
              form.contentHtml.value=editor.getHTML();
              form.submit();

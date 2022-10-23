@@ -28,18 +28,12 @@
       </tr>
       </thead>
       <tbody>
-        <tr th:each="post : ${posts}" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            <span th:text="${post.id}"></span>
-          </th>
-            <td th:text="${post.subject}" class="py-4 px-6">
-            </td>
-          <td th:text="${post.nickname}" class="py-4 px-6">
-          </td>
-          <td th:text="${post.createDate}" class="py-4 px-6">
-          </td>
-          <td th:text="${post.updateDate}" class="py-4 px-6">
-          </td>
+        <tr th:each="post, loop : ${posts}" th:onclick="|location.href='@{|/post/${post.id}|}'|"class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td th:text="${loop.index+1}"></td>
+            <td th:text="${post.subject}" class="py-4 px-6"></td>
+            <td th:text="${post.nickname}" class="py-4 px-6"></td>
+            <td th:text="${post.createDate}" class="py-4 px-6"></td>
+            <td th:text="${post.updateDate}" class="py-4 px-6"></td>
         </tr>
       </tbody>
     </table>
