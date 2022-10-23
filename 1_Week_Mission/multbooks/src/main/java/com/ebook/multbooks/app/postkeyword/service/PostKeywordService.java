@@ -1,6 +1,7 @@
 package com.ebook.multbooks.app.postkeyword.service;
 
 import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
+import com.ebook.multbooks.app.postkeyword.exception.PostKeywordNotFoundException;
 import com.ebook.multbooks.app.postkeyword.repository.PostKeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,9 @@ public class PostKeywordService {
 
     public List<PostKeyword> getKeywordByMemberId(Long loginMemberId) {
         return postKeywordRepository.getKeywordByMemberIdQsl (loginMemberId);
+    }
+
+    public PostKeyword getKeywordById(Long postKeywordId) {
+        return postKeywordRepository.findById(postKeywordId).orElseThrow(()->new PostKeywordNotFoundException("상품을 찾을수 없습니다."));
     }
 }

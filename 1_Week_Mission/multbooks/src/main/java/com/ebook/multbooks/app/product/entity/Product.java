@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 public class Product extends BaseEntity {
 
     private String subject;
+
     private int price;
 
     @ManyToOne(fetch = FetchType.LAZY)
