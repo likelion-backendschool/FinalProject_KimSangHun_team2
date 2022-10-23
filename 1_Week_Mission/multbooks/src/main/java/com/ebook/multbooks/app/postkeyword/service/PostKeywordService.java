@@ -45,4 +45,8 @@ public class PostKeywordService {
 
         return  postKeywordRepository.save(postKeyword);
     }
+
+    public List<PostKeyword> getKeywordByMemberId(Long loginMemberId) {
+        return postKeywordRepository.getKeywordByMemberIdQsl (loginMemberId);
+    }
 }
