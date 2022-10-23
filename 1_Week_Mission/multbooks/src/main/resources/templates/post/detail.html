@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html  layout:decorate="~{layout/layout.html}" >
+<head>
+  <meta charset="UTF-8">
+  <title>글 상세 보기</title>
+</head>
+<body>
+<main layout:fragment="main">
+  <div class="px-24 py-24 flex-grow border-2 border-blue-200">
+  <h3 class="text-3xl font-bold mb-6 dark:text-white">글 상세보기</h3>
+      <div class="mb-6">
+        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">게시물 번호</label>
+        <p  th:text="${postDetail.id}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      </div>
+    <div class="mb-6">
+      <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">게시물 제목</label>
+      <p  th:text="${postDetail.subject}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    </div>
+    <div class="mb-6">
+      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">게시물 내용</label>
+      <p  th:text="${postDetail.content}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    </div>
+    <div class="mb-6">
+      <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">게시물 작성자</label>
+      <p  th:text="${postDetail.author}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
+    </div>
+    <div class="mb-6">
+      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">게시물 생성날짜</label>
+      <p  th:text="${postDetail.createDate}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    </div>
+    <div class="mb-6">
+      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">게시물 수정날짜</label>
+      <p  th:text="${postDetail.updateDate}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    </div>
+    <div class="mb-6">
+      <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">해쉬태그</label>
+      <p  th:text="${postDetail.hashTag}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    </div>
+    <div class="flex">
+      <div class="mr-2">
+        <a th:href="@{|/post/${postDetail.id}/modify|}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">글 수정</a>
+      </div>
+      <div>
+        <a onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();" th:href="@{|/post/${postDetail.id}/delete|}"class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">글  삭제</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
