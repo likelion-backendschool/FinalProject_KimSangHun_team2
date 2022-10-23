@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.post.controller;
 
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.post.dto.PostDetailDto;
 import com.ebook.multbooks.app.post.dto.PostListDto;
 import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
@@ -73,6 +74,17 @@ public class PostController {
 
     model.addAttribute("posts",postListDtos);
     return "/post/list";
+    }
+
+    /**
+     * 글 상세 보기
+     * */
+    @ GetMapping("/{id}")
+    public String postDetail(@PathVariable Long id,Model model){
+            Post post=postService.getPostById(id);
+            PostDetailDto postDetailDto=postService.getPostDetailDtoById(id);
+            model.addAttribute("postDetail",postDetailDto);
+            return "/post/detail";
     }
 
     /**

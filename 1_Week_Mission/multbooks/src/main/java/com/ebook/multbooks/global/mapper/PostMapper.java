@@ -1,5 +1,6 @@
 package com.ebook.multbooks.global.mapper;
 
+import com.ebook.multbooks.app.post.dto.PostDetailDto;
 import com.ebook.multbooks.app.post.dto.PostListDto;
 import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
@@ -27,4 +28,7 @@ public interface PostMapper {
     Post postWriteFormToPost(PostWriteForm postWriteForm);
 
     PostModifyForm postToPostModifyForm(Post post);
+
+    @Mapping(target = "author",source = "author.nickname")
+    PostDetailDto postToPostDetailDto(Post post);
 }

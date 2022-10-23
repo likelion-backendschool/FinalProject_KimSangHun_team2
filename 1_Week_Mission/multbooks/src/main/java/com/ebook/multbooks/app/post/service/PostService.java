@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.post.service;
 
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.post.dto.PostDetailDto;
 import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
 import com.ebook.multbooks.app.post.entity.Post;
@@ -84,5 +85,14 @@ public class PostService {
     public void modifyPost(Post post, PostModifyForm postModifyForm) {
         post.modify(postModifyForm);
         postHashTagService.modifyPostHashTagAndPostKeyword(post,postModifyForm.getHashtag());
+    }
+
+    public PostDetailDto getPostDetailDtoById(Long id) {
+        Post post=getPostById(id);
+        List<PostKeyword>postKeywords=postHashTagService.getPostKeywords(post);
+        PostDetailDto postDetailDto =postMapper.postToPostDetailDto(post);
+        String hashTag=postKeywords.stream().map(postKeyword ->"#"+postKeyword.getContent()).collect(Collectors.joining(" "));
+        postDetailDto.setHashTag(hashTag);
+        return postDetailDto;
     }
 }

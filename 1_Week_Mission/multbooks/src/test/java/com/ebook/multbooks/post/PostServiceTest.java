@@ -1,6 +1,7 @@
 package com.ebook.multbooks.post;
 
 import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.app.post.dto.PostDetailDto;
 import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
 import com.ebook.multbooks.app.post.entity.Post;
@@ -66,6 +67,14 @@ public class PostServiceTest {
         postService.modifyPost(post,PostModifyForm.builder().subject("수정제목1").content("수정내용2").contentHtml("수정내용2").hashtag("#일까요").build());
         List<PostKeyword> postKeywords= postHashTagService.getPostKeywords(post);
         assertThat(postService.getPostById(post.getId()).getSubject()).isEqualTo("수정제목1");
+
+    }
+    @Test
+    @DisplayName("글 상세보기 테스트")
+    public void t6(){
+        Post post=postService.writePost("user1",new PostWriteForm("제목1","내용1","내용1","#테스트 #입니다"));
+        PostDetailDto postDetailDto =postService.getPostDetailDtoById(post.getId());
+        assertThat(postDetailDto.getHashTag()).isEqualTo("#테스트 #입니다");
 
     }
 }
