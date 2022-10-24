@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
 import com.ebook.multbooks.app.postkeyword.repository.PostKeywordRepositoryImpl;
 import com.ebook.multbooks.app.postkeyword.service.PostKeywordService;
 import com.ebook.multbooks.app.product.dto.ProductDetailDto;
+import com.ebook.multbooks.app.product.dto.ProductListDto;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.exception.ProductNotFoundException;
 import com.ebook.multbooks.app.product.repository.ProductRepository;
@@ -12,6 +13,8 @@ import com.ebook.multbooks.global.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,5 +43,10 @@ public class ProductService {
     public ProductDetailDto productToProductDetailDto(Product product) {
         ProductDetailDto productDetailDto=productMapper.productToProductDetailDto(product);
         return productDetailDto;
+    }
+
+    public List<ProductListDto> getAllProductListDtosOrderByUpdateDate() {
+        List<Product> products=productRepository. getAllProductOrderByUpdateDate();
+        return productMapper.productsToProductListDtos(products);
     }
 }

@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
 import com.ebook.multbooks.app.postkeyword.service.PostKeywordService;
 import com.ebook.multbooks.app.product.dto.ProductDetailDto;
+import com.ebook.multbooks.app.product.dto.ProductListDto;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.service.ProductService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
@@ -49,5 +50,14 @@ public class ProductServiceTest {
         Product product =productService.createProduct(member,"상품1",1000,1L);
         ProductDetailDto productDetailDto =productService.productToProductDetailDto(product);
         assertThat(productDetailDto.getAuthor()).isEqualTo(member.getNickname());
+    }
+    @Test
+    @DisplayName("getAllProductListDtosOrderByUpdateDate  테스트")
+    public void t3(){
+        Member member=memberService.getMemberByUsername("user1");
+        Product product1 =productService.createProduct(member,"상품1",1000,1L);
+        Product product2 =productService.createProduct(member,"상품2",1000,1L);
+        List<ProductListDto> productListDtos=productService.getAllProductListDtosOrderByUpdateDate();
+        assertThat(productListDtos.size()).isGreaterThanOrEqualTo(2);
     }
 }

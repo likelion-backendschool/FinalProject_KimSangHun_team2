@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
 import com.ebook.multbooks.app.postkeyword.service.PostKeywordService;
 import com.ebook.multbooks.app.product.dto.ProductDetailDto;
 import com.ebook.multbooks.app.product.dto.ProductForm;
+import com.ebook.multbooks.app.product.dto.ProductListDto;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.service.ProductService;
 import com.ebook.multbooks.global.rq.Rq;
@@ -12,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.naming.Binding;
 import javax.validation.Valid;
@@ -32,16 +30,20 @@ public class ProductController {
     public String createForm(Model model){
         List<PostKeyword> postKeywords=postKeywordService.getKeywordByMemberId(rq.getId());
         model.addAttribute("postKeywords",postKeywords);
+        model.addAttribute("product",new ProductForm());
         return "product/createForm";
     }
     @PostMapping("/create")
-    public String create(@Valid ProductForm productForm, BindingResult bindingResult){
+    public String create(@Valid @ModelAttribute("product") ProductForm productForm, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return "product/createForm";
+            System.out.println("subject:"+productForm.getSubject());
+            System.out.println("price:"+productForm.getPrice());
+            System.out.println("keywordId:"+productForm.getPostKeywordId());
+            return "redirect:/product/create";
         }
         Member author=rq.getMember();
         Product product=productService.createProduct(author,productForm.getSubject(),productForm.getPrice(),productForm.getPostKeywordId());
-        return "redirect:/product"+product.getId();
+        return "redirect:/product/"+product.getId();
     }
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id,Model model){
@@ -49,5 +51,12 @@ public class ProductController {
         ProductDetailDto productDetailDto=productService.productToProductDetailDto(product);
         model.addAttribute("productDetail",productDetailDto);
         return "product/detail";
+    }
+
+    @GetMapping("/list")
+    public String list(Model model){
+        List<ProductListDto>productListDtos= productService.getAllProductListDtosOrderByUpdateDate();
+        model.addAttribute("productList",productListDtos);
+        return "product/list";
     }
 }
