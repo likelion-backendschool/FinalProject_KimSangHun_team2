@@ -1,5 +1,7 @@
 package com.ebook.multbooks.app.base;
 
+import com.ebook.multbooks.app.cartitem.entity.CartItem;
+import com.ebook.multbooks.app.cartitem.service.CartService;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
@@ -17,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Profile("test")
 public class TestInitData {
     @Bean
-    CommandLineRunner init(MemberService memberService, PasswordEncoder passwordEncoder, PostService postService, ProductService productService){
+    CommandLineRunner init(MemberService memberService, PasswordEncoder passwordEncoder, PostService postService, ProductService productService, CartService cartService){
         return args -> {
             String password=passwordEncoder.encode("1234");
 
@@ -29,6 +31,9 @@ public class TestInitData {
 
             Product product1=productService.createProduct(member1,"도서1",1000,1L);//자신의 글의 키워드 중 마법 키워드를 가지는 도서 생성
             Product product2=productService.createProduct(member2,"도서2",2000,3L);//자신의 글의 키워드 중 로맨스 키워드를 가지는 도서 생성
+
+            CartItem cartItem1 =cartService.addItem(member1,product1,2);
+            CartItem cartItem2 =cartService.addItem(member1,product2,3);
         };
     }
 }
