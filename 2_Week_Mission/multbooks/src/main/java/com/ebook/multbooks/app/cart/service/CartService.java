@@ -1,7 +1,7 @@
-package com.ebook.multbooks.app.cartitem.service;
+package com.ebook.multbooks.app.cart.service;
 
-import com.ebook.multbooks.app.cartitem.entity.CartItem;
-import com.ebook.multbooks.app.cartitem.repository.CartItemRepository;
+import com.ebook.multbooks.app.cart.entity.CartItem;
+import com.ebook.multbooks.app.cart.repository.CartItemRepository;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class CartService {
 
     @Transactional
     public CartItem addItem(Member member, Product product,int quantity){
-        CartItem oldCartItem =cartItemRepository.findByMemberAndProduct(member,product).orElse(null);
+        CartItem oldCartItem =getItemByMemberAndProduct(member,product);
 
         if(oldCartItem!=null){
             oldCartItem.addQuantity(quantity);
@@ -41,5 +41,9 @@ public class CartService {
 
     public List<CartItem> getCartItemsByMember(Member member) {
         return cartItemRepository.findAllByMember(member);
+    }
+
+    public CartItem getItemByMemberAndProduct(Member member, Product product) {
+    return cartItemRepository.findByMemberAndProduct(member,product).orElse(null);
     }
 }

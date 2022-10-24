@@ -1,7 +1,7 @@
 package com.ebook.multbooks.app.base;
 
-import com.ebook.multbooks.app.cartitem.entity.CartItem;
-import com.ebook.multbooks.app.cartitem.service.CartService;
+import com.ebook.multbooks.app.cart.entity.CartItem;
+import com.ebook.multbooks.app.cart.service.CartService;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;

@@ -1,7 +1,7 @@
 package com.ebook.multbooks.app.order.service;
 
-import com.ebook.multbooks.app.cartitem.entity.CartItem;
-import com.ebook.multbooks.app.cartitem.service.CartService;
+import com.ebook.multbooks.app.cart.entity.CartItem;
+import com.ebook.multbooks.app.cart.service.CartService;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

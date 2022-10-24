@@ -1,9 +1,8 @@
-package com.ebook.multbooks.app.cartitem.entity;
+package com.ebook.multbooks.app.cart.entity;
 
 import com.ebook.multbooks.app.base.entity.BaseEntity;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.product.entity.Product;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

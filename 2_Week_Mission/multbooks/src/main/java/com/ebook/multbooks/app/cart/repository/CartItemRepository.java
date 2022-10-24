@@ -1,11 +1,10 @@
-package com.ebook.multbooks.app.cartitem.repository;
+package com.ebook.multbooks.app.cart.repository;
 
-import com.ebook.multbooks.app.cartitem.entity.CartItem;
+import com.ebook.multbooks.app.cart.entity.CartItem;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.product.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

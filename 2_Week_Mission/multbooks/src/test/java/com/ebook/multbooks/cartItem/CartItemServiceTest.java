@@ -1,13 +1,11 @@
 package com.ebook.multbooks.cartItem;
 
-import com.ebook.multbooks.app.cartitem.entity.CartItem;
-import com.ebook.multbooks.app.cartitem.service.CartService;
+import com.ebook.multbooks.app.cart.entity.CartItem;
+import com.ebook.multbooks.app.cart.service.CartService;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
-import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.repository.ProductRepository;
-import com.ebook.multbooks.app.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
