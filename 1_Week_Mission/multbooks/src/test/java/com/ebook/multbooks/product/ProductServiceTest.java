@@ -81,4 +81,14 @@ public class ProductServiceTest {
         assertThat(updateProduct.getSubject()).isEqualTo(productModifyForm.getSubject());
         assertThat(updateProduct.getPrice()).isEqualTo(productModifyForm.getPrice());
     }
+    @Test
+    @DisplayName("deleteProduct 테스트")
+    public void t6(){
+        Member member=memberService.getMemberByUsername("user1");
+        Product product=productService.createProduct(member,"상품1",1000,1L);
+
+        assertThat(productService.getAllProductListDtosOrderByUpdateDate().size()).isEqualTo(1);
+       productService.deleteProduct(product.getId());
+        assertThat(productService.getAllProductListDtosOrderByUpdateDate().size()).isEqualTo(0);
+    }
 }

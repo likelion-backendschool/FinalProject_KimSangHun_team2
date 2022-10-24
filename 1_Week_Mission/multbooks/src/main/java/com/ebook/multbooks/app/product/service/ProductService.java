@@ -63,4 +63,9 @@ public class ProductService {
         product.update(subject,price);
         return product;
     }
+
+    public void deleteProduct(Long productId) {
+        Product product=getProductById(productId);
+        productRepository.delete(product);
+    }
 }

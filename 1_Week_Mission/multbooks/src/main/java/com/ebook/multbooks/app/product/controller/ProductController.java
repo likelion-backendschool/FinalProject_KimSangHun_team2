@@ -71,4 +71,9 @@ public class ProductController {
         Product product=productService.modifyProduct(id,productModifyForm);
         return  "redirect:/product/"+product.getId();
     }
+    @GetMapping("/product/{id}/delete")
+    public String delete(@PathVariable Long id){
+        productService.deleteProduct(id);
+        return "redirect:/product/list";
+    }
 }
