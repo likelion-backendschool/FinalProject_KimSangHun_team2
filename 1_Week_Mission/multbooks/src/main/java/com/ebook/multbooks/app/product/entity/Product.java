@@ -28,4 +28,8 @@ public class Product extends BaseEntity {
     private PostKeyword postKeyword;
 
 
+    public void update(String subject, int price) {
+        this.subject=subject;
+        this.price=price;
+    }
 }

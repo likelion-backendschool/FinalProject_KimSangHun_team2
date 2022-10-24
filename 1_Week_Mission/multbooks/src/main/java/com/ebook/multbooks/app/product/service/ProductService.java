@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.postkeyword.repository.PostKeywordRepositoryImpl;
 import com.ebook.multbooks.app.postkeyword.service.PostKeywordService;
 import com.ebook.multbooks.app.product.dto.ProductDetailDto;
 import com.ebook.multbooks.app.product.dto.ProductListDto;
+import com.ebook.multbooks.app.product.dto.ProductModifyForm;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.exception.ProductNotFoundException;
 import com.ebook.multbooks.app.product.repository.ProductRepository;
@@ -48,5 +49,18 @@ public class ProductService {
     public List<ProductListDto> getAllProductListDtosOrderByUpdateDate() {
         List<Product> products=productRepository. getAllProductOrderByUpdateDate();
         return productMapper.productsToProductListDtos(products);
+    }
+
+    public ProductModifyForm getProductModifyFormByProductId(Long productId) {
+        Product product=getProductById(productId);
+        return productMapper.productToProductModifyForm(product);
+    }
+@Transactional
+    public Product modifyProduct(Long productId, ProductModifyForm productModifyForm) {
+        Product product=getProductById(productId);
+        String subject=productModifyForm.getSubject();
+        int price=productModifyForm.getPrice();
+        product.update(subject,price);
+        return product;
     }
 }

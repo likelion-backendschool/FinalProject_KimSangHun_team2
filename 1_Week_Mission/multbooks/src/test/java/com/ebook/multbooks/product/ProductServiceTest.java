@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
 import com.ebook.multbooks.app.postkeyword.service.PostKeywordService;
 import com.ebook.multbooks.app.product.dto.ProductDetailDto;
 import com.ebook.multbooks.app.product.dto.ProductListDto;
+import com.ebook.multbooks.app.product.dto.ProductModifyForm;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.service.ProductService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
@@ -59,5 +60,25 @@ public class ProductServiceTest {
         Product product2 =productService.createProduct(member,"상품2",1000,1L);
         List<ProductListDto> productListDtos=productService.getAllProductListDtosOrderByUpdateDate();
         assertThat(productListDtos.size()).isGreaterThanOrEqualTo(2);
+    }
+    @Test
+    @DisplayName("getProductModifyFormByProductId  테스트")
+    public void t4(){
+        Member member=memberService.getMemberByUsername("user1");
+        Product product=productService.createProduct(member,"상품1",1000,1L);
+        ProductModifyForm productModifyForm=productService.getProductModifyFormByProductId(product.getId());
+        assertThat(productModifyForm.getSubject()).isEqualTo(product.getSubject());
+        assertThat(productModifyForm.getPrice()).isEqualTo(product.getPrice());
+    }
+    @Test
+    @DisplayName("modifyProduct 테스트")
+    public void t5(){
+        ProductModifyForm productModifyForm =ProductModifyForm.builder().subject("수정").price(10000).build();
+        Member member=memberService.getMemberByUsername("user1");
+        Product product=productService.createProduct(member,"상품1",1000,1L);
+
+        Product updateProduct=productService.modifyProduct(product.getId(),productModifyForm);
+        assertThat(updateProduct.getSubject()).isEqualTo(productModifyForm.getSubject());
+        assertThat(updateProduct.getPrice()).isEqualTo(productModifyForm.getPrice());
     }
 }

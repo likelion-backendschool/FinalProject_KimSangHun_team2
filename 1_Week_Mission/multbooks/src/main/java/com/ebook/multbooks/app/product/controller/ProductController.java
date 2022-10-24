@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.postkeyword.service.PostKeywordService;
 import com.ebook.multbooks.app.product.dto.ProductDetailDto;
 import com.ebook.multbooks.app.product.dto.ProductForm;
 import com.ebook.multbooks.app.product.dto.ProductListDto;
+import com.ebook.multbooks.app.product.dto.ProductModifyForm;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.service.ProductService;
 import com.ebook.multbooks.global.rq.Rq;
@@ -58,5 +59,16 @@ public class ProductController {
         List<ProductListDto>productListDtos= productService.getAllProductListDtosOrderByUpdateDate();
         model.addAttribute("productList",productListDtos);
         return "product/list";
+    }
+    @GetMapping("/{id}/modify")
+    public String modifyForm(@PathVariable Long id,Model model){
+        ProductModifyForm productModifyForm=productService.getProductModifyFormByProductId(id);
+        model.addAttribute("form",productModifyForm);
+        return "product/modifyForm";
+    }
+    @PostMapping("/{id}/modify")
+    public String modify(@Valid @ModelAttribute("form") ProductModifyForm productModifyForm,@PathVariable Long id){
+        Product product=productService.modifyProduct(id,productModifyForm);
+        return  "redirect:/product/"+product.getId();
     }
 }
