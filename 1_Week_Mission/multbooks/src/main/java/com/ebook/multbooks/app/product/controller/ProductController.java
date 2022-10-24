@@ -8,9 +8,11 @@ import com.ebook.multbooks.app.product.dto.ProductForm;
 import com.ebook.multbooks.app.product.dto.ProductListDto;
 import com.ebook.multbooks.app.product.dto.ProductModifyForm;
 import com.ebook.multbooks.app.product.entity.Product;
+import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.app.product.service.ProductService;
 import com.ebook.multbooks.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +29,7 @@ public class ProductController {
     private final PostKeywordService postKeywordService;
     private final ProductService productService;
     private final Rq rq;
+    @PreAuthorize("isAuthenticated() and hasAuthority('AUTHOR')")
     @GetMapping("/create")
     public String createForm(Model model){
         List<PostKeyword> postKeywords=postKeywordService.getKeywordByMemberId(rq.getId());
@@ -34,18 +37,17 @@ public class ProductController {
         model.addAttribute("product",new ProductForm());
         return "product/createForm";
     }
+    @PreAuthorize("isAuthenticated() and hasAuthority('AUTHOR')")
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("product") ProductForm productForm, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            System.out.println("subject:"+productForm.getSubject());
-            System.out.println("price:"+productForm.getPrice());
-            System.out.println("keywordId:"+productForm.getPostKeywordId());
             return "redirect:/product/create";
         }
         Member author=rq.getMember();
         Product product=productService.createProduct(author,productForm.getSubject(),productForm.getPrice(),productForm.getPostKeywordId());
         return "redirect:/product/"+product.getId();
     }
+
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id,Model model){
         Product product=productService.getProductById(id);
@@ -60,19 +62,44 @@ public class ProductController {
         model.addAttribute("productList",productListDtos);
         return "product/list";
     }
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/modify")
     public String modifyForm(@PathVariable Long id,Model model){
+        Product product =productService.getProductById(id);
+        Member actor=rq.getMember();
+
+        if(productService.actorCanModify(actor,product)==false){
+            throw  new ActorCanNotModifyException();
+        }
         ProductModifyForm productModifyForm=productService.getProductModifyFormByProductId(id);
         model.addAttribute("form",productModifyForm);
         return "product/modifyForm";
     }
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/modify")
     public String modify(@Valid @ModelAttribute("form") ProductModifyForm productModifyForm,@PathVariable Long id){
-        Product product=productService.modifyProduct(id,productModifyForm);
+        Product product =productService.getProductById(id);
+        Member actor=rq.getMember();
+
+        if(productService.actorCanModify(actor,product)==false){
+            throw  new ActorCanNotModifyException();
+        }
+
+        productService.modifyProduct(id,productModifyForm);
+
         return  "redirect:/product/"+product.getId();
     }
-    @GetMapping("/product/{id}/delete")
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}/delete")
     public String delete(@PathVariable Long id){
+        Product product =productService.getProductById(id);
+        Member actor=rq.getMember();
+
+        if(productService.actorCanModify(actor,product)==false){
+            throw  new ActorCanNotModifyException();
+        }
+
         productService.deleteProduct(id);
         return "redirect:/product/list";
     }

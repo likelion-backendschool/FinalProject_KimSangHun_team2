@@ -55,7 +55,7 @@ public class ProductService {
         Product product=getProductById(productId);
         return productMapper.productToProductModifyForm(product);
     }
-@Transactional
+    @Transactional
     public Product modifyProduct(Long productId, ProductModifyForm productModifyForm) {
         Product product=getProductById(productId);
         String subject=productModifyForm.getSubject();
@@ -63,9 +63,13 @@ public class ProductService {
         product.update(subject,price);
         return product;
     }
-
+    @Transactional
     public void deleteProduct(Long productId) {
         Product product=getProductById(productId);
         productRepository.delete(product);
+    }
+
+    public boolean actorCanModify(Member actor, Product product) {
+        return actor.getId().equals(product.getAuthor().getId());
     }
 }
