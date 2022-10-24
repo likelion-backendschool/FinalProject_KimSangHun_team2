@@ -29,6 +29,7 @@ public class ProductService {
                 .postKeyword(postKeyword)
                 .price(price)
                 .build();
+        productRepository.save(product);
         return product;
     }
 
