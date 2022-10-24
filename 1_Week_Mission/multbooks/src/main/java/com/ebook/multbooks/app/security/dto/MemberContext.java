@@ -21,6 +21,7 @@ public class MemberContext extends User {
     private final Long id;
     private final LocalDateTime createDate;
     private  LocalDateTime updateDate;
+    private String username;
     private  String nickname;
     private String email;
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
@@ -30,6 +31,7 @@ public class MemberContext extends User {
         this.updateDate=member.getUpdateDate();
         this.nickname=member.getNickname();
         this.email=member.getEmail();
+        this.username=member.getUsername();
     }
 
 
@@ -37,5 +39,20 @@ public class MemberContext extends User {
         this.email=email;
         this.nickname=nickname;
         this.updateDate=updateDate;
+    }
+    public Member getMember() {
+        return Member
+                .builder()
+                .id(id)
+                .createDate(createDate)
+                .updateDate(updateDate)
+                .username(username)
+                .email(email)
+                .nickname(nickname)
+                .build();
+    }
+    public boolean hasAuthority(String authorityName) {
+        return getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authorityName));
     }
 }
