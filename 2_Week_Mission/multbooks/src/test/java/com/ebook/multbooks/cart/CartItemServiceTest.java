@@ -1,4 +1,4 @@
-package com.ebook.multbooks.cartItem;
+package com.ebook.multbooks.cart;
 
 import com.ebook.multbooks.app.cart.entity.CartItem;
 import com.ebook.multbooks.app.cart.service.CartService;
@@ -32,10 +32,10 @@ public class CartItemServiceTest {
         Member member=memberRepository.findByUsername("user1").get();
         Product product=productRepository.findBySubject("도서1"). get();
         CartItem cartItem =cartService.addItem(member,product,3);
-        assertThat(cartItem.getQuantity()).isEqualTo(3);
+        assertThat(cartItem.getQuantity()).isEqualTo(5);
 
         //cartItem 에 같은 item 추가
         CartItem addCartItem =cartService.addItem(member,product,3);
-        assertThat(addCartItem.getQuantity()).isEqualTo(6);
+        assertThat(addCartItem.getQuantity()).isEqualTo(8);
     }
 }

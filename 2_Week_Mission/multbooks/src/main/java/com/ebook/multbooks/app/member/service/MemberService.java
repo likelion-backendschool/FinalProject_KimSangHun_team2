@@ -1,5 +1,7 @@
 package com.ebook.multbooks.app.member.service;
 
+import com.ebook.multbooks.app.cash.entity.CashLog;
+import com.ebook.multbooks.app.cash.service.CashService;
 import com.ebook.multbooks.app.member.authority.AuthLevel;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
@@ -18,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final CashService cashService;
 
     public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElse(null);
@@ -75,5 +78,15 @@ public class MemberService {
 
     public Member getMemberByUsernameAndEmail(String username, String email) {
         return memberRepository.findByUsernameAndEmail(username,email).orElse(null);
+    }
+    @Transactional
+    public long addCash(Member member,long price){
+        //예치금 로그 남기기
+        CashLog cashLog=cashService.addCash(member,price);
+        //현재 + 충전 예치금 계산
+        long newRestCash=member.getRestCash()+cashLog.getPrice();
+        //예치금 업데이트
+        member.updateRestCash(newRestCash);
+        return newRestCash;
     }
 }
