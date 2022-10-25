@@ -2,6 +2,8 @@ package com.ebook.multbooks.app.product.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -12,4 +14,6 @@ public class ProductListDto {
     private String subject;
     private int price;
     private String author;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
 }

@@ -20,15 +20,20 @@ public class DevInitData {
     CommandLineRunner init(MemberService memberService, PasswordEncoder passwordEncoder, PostService postService, ProductService productService){
        return args -> {
            String password=passwordEncoder.encode("1234");
-
+            //3명회원가입=>2명작가,1명그냥회원
            Member member1=memberService.join("user1",password,"user1@test.com","author1");
            Member member2=memberService.join("user2",password,"user2@test.com","author2");
+           Member member3=memberService.join("user3",password,"user3@test.com","");
 
-           Post post1=postService.writePost(member1.getUsername(),new PostWriteForm("제목1","내용1","내용1","#마법 #기사"));
-           Post post2=postService.writePost(member2.getUsername(),new PostWriteForm("제목2","내용2","내용2","#로맨스 #판타지"));
+            //작가 회원들이 1개씩 글쓰기
+           Post post1=postService.writePost(member1.getUsername(),new PostWriteForm("글제목1","글내용1","글내용1","#마법 #기사"));
+           Post post2=postService.writePost(member2.getUsername(),new PostWriteForm("글제목2","글내용2","글내용2","#로맨스 #판타지"));
 
+           //2명의작가 각키워드 별로 상품 만들기
            Product product1=productService.createProduct(member1,"도서1",1000,1L);//자신의 글의 키워드 중 마법 키워드를 가지는 도서 생성
-           Product product2=productService.createProduct(member2,"도서2",2000,3L);//자신의 글의 키워드 중 로맨스 키워드를 가지는 도서 생성
+           Product product2=productService.createProduct(member1,"도서2",2000,2L);//자신의 글의 키워드 중 기사 키워드를 가지는 도서 생성
+           Product product3=productService.createProduct(member2,"도서3",3000,3L);//자신의 글의 키워드 중 로맨스 키워드를 가지는 도서 생성
+           Product product4=productService.createProduct(member2,"도서4",4000,4L);//자신의 글의 키워드 중 판타지 키워드를 가지는 도서 생성
 
        };
     }

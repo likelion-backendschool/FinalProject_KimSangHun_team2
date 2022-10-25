@@ -1,5 +1,6 @@
 package com.ebook.multbooks.app.cart.controller;
 
+import com.ebook.multbooks.app.cart.dto.CartListDto;
 import com.ebook.multbooks.app.cart.entity.CartItem;
 import com.ebook.multbooks.app.cart.service.CartService;
 import com.ebook.multbooks.app.product.entity.Product;
@@ -27,8 +28,8 @@ public class CartController {
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model){
-        List<CartItem>cartItems=cartService.getCartItemsByMember(rq.getMember());
-        model.addAttribute("cartItems",cartItems);
+        List<CartListDto>cartListDtos=cartService.getCartListDtosByMember(rq.getMember());
+        model.addAttribute("cartItems",cartListDtos);
         return "cart/list";
     }
 

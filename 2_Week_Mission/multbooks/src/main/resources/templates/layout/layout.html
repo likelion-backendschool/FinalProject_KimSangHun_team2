@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html >
 <head>
+    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -36,6 +38,12 @@
     <!--toastr-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <!-- jdenticon -->
+    <script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js" async
+            integrity="sha384-yBhgDqxM50qJV5JPdayci8wCfooqvhFYbIKhv0hTtLvfeeyJMJCscRfFNKIxt43M"
+            crossorigin="anonymous">
+    </script>
 
     <title>Title</title>
 
@@ -88,7 +96,6 @@
     <div class="container flex flex-nowrap items-center mx-auto">
         <div id="logo" >
             <a href="/" class="flex items-center">
-                <img src="https://img.icons8.com/arcade/64/000000/experimental-book-arcade.png" class="mr-3 h-6 sm:h-9" alt="Logo">
                 <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">멋북스</span>
             </a>
         </div>

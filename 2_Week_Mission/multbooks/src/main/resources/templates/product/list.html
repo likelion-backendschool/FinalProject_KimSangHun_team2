@@ -1,39 +1,77 @@
 <!DOCTYPE html>
 <html  layout:decorate="~{layout/layout.html}" >
 <head>
-  <meta charset="UTF-8">
-  <title>상품 리스트</title>
+    <meta charset="UTF-8">
+    <title>상품 리스트</title>
 </head>
 <body>
 <main layout:fragment="main">
-  <div class="px-24 py-24 overflow-x-auto relative">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-      <tr>
-        <th scope="col" class="py-3 px-6">
-          번호
-        </th>
-        <th scope="col" class="py-3 px-6">
-          제목
-        </th>
-        <th scope="col" class="py-3 px-6">
-          가격
-        </th>
-        <th scope="col" class="py-3 px-6">
-          작가
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-        <tr th:each="product, loop : ${productList}" th:onclick="|location.href='@{|/product/${product.id}|}'|"class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td th:text="${loop.index+1}" class="py-4 px-6"></td>
-           <td th:text="${product.subject}" class="py-4 px-6"></td>
-            <td th:text="${product.price}" class="py-4 px-6"></td>
-            <td th:text="${product.author}" class="py-4 px-6"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+
+    <div class="px-24 py-24 overflow-x-auto relative flex flex-wrap justify-center items-center ">
+        <div th:each=" product , loop : ${productList}" class="card bg-base-100 shadow-xl mx-3">
+            <div class="max-w-sm rounded overflow-hidden shadow-lg">
+                <!--이미지-->
+                <a th:href="@{|/product/${product.id}|}" class="block flex justify-center items-center ">
+                    <figure>
+                        <svg width="200" height="200" th:data-jdenticon-value="${product.id}"></svg>
+                    </figure>
+                </a>
+                <!--바디-->
+                <div class="px-6 py-4">
+                    <!--상품명 및 작가명-->
+                    <h2 class="card-title flex flex-wrap">
+                        <a th:href="@{|/product/${product.id}|}" class="mr-auto">
+                            <i class="fa-solid fa-book-open"></i>
+                            <span th:text="${product.subject}"></span>
+                        </a>
+                        <div class="flex">
+                            <svg width="20" height="20" th:data-jdenticon-value="${product.id}"></svg>
+                            <div th:text="${product.author}"></div>
+                        </div>
+                    </h2>
+                    <!--가격 -->
+                    <div th:text="|$:${product.price}|"></div>
+
+                    <!--날짜-->
+                    <div class="flex justify-end">
+                        <div class="badge badge-outline">
+                            <i class="fa-solid fa-pen"></i>
+                            <span class="ml-2"
+                                  th:text="${#temporals.format(product.createDate, 'yy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <div class="badge badge-outline">
+                            <i class="fa-solid fa-pen"></i>
+                            <span class="ml-2"
+                                  th:text="${#temporals.format(product.createDate, 'yy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+
+                    <!--버튼-->
+                    <div class="card-actions justify-end">
+                        <form action="#" th:action="@{|/cart/add/${product.id}|}" method="post" class="register">
+                            <input
+                                    type="hidden"
+                                    th:name="${_csrf.parameterName}"
+                                    th:value="${_csrf.token}" />
+                           <button>
+                               <i class="fa-solid fa-cart-plus"></i>
+                               <span class="ml-2">장바구니</span>
+                           </button>
+                        </form>
+
+                        <a th:href="@{|/product/${product.id}|}" class="btn btn-sm">
+                            <i class="fa-solid fa-eye"></i>
+                            <span class="ml-2">보기</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 </body>
 </html>
