@@ -58,4 +58,11 @@ public class Order extends BaseEntity {
         isPaid=true;
         this.payPrice=payPrice;
     }
+
+    public void refund() {
+        isRefunded=true;
+        for(OrderItem orderItem:orderItems){
+            orderItem.refund();
+        }
+    }
 }

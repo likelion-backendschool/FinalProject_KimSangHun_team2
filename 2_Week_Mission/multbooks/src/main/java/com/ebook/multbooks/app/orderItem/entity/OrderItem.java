@@ -37,4 +37,8 @@ public class OrderItem extends BaseEntity {
     public int calculatePayPrice(){
         return salePrice*quantity;
     }
+
+    public void refund() {
+        refundPrice=calculatePayPrice();
+    }
 }

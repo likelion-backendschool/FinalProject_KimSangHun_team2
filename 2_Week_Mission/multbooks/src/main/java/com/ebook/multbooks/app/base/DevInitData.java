@@ -29,6 +29,7 @@ public class DevInitData {
 
            Product product1=productService.createProduct(member1,"도서1",1000,1L);//자신의 글의 키워드 중 마법 키워드를 가지는 도서 생성
            Product product2=productService.createProduct(member2,"도서2",2000,3L);//자신의 글의 키워드 중 로맨스 키워드를 가지는 도서 생성
+
        };
     }
 }

@@ -65,4 +65,13 @@ public class OrderService {
         //주문의 상태 속성 변경
         order.paymentDone(payPrice);
     }
+
+    @Transactional
+    public void refund(Order order) {
+        int payPrice=order.getPayPrice();
+        memberService.addCash(order.getMember(),payPrice,EventType.CHARGE_FOR_REFUND);
+        order.refund();
+        orderRepository.save(order);
+    }
+
 }

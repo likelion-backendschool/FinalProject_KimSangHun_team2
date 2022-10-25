@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.member.repository.MemberRepository;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.order.service.OrderService;
+import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.orderItem.repository.OrderItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,11 +42,24 @@ public class OrderServiceTest {
         assertThat(orderItemRepository.findAll().size()).isGreaterThanOrEqualTo(2);
     }
     @Test
-    @Rollback(value = false)
     @DisplayName("payByResCash 테스트")
     public void  t2(){
         Order order=orderRepository.findByName("카트주문1").orElse(null);
         orderService.payByRestCash(order);
         assertThat(order.getPayPrice()).isNotEqualTo(0);
     }
+
+    @Test
+    @DisplayName("refund 테스트")
+    public void  t3(){
+        Order order=orderRepository.findByName("카트주문1").orElse(null);
+        orderService.payByRestCash(order);
+        orderService.refund(order);
+        assertThat(order.isRefunded()).isEqualTo(true);
+        for(OrderItem orderItem:order.getOrderItems()){
+            assertThat(orderItem.getRefundPrice()).isGreaterThanOrEqualTo(0);
+        }
+        assertThat(order.getMember().getRestCash()).isEqualTo(100000);
+    }
+
 }
