@@ -1,6 +1,7 @@
 package com.ebook.multbooks.member;
 
 import com.ebook.multbooks.app.cart.repository.CartItemRepository;
+import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.cash.repository.CashLogRepository;
 import com.ebook.multbooks.app.member.authority.AuthLevel;
 import com.ebook.multbooks.app.member.entity.Member;
@@ -53,7 +54,7 @@ public class MemberTest {
     @DisplayName("addCash 테스트")
     public void t2(){
         Member member=memberRepository.findByUsername("user1").get();
-        memberService.addCash(member,10000);
+        memberService.addCash(member,10000, EventType.CHARGE_FOR_PAYMENT);
         assertThat(member.getRestCash()).isGreaterThanOrEqualTo(10000);
 
     }

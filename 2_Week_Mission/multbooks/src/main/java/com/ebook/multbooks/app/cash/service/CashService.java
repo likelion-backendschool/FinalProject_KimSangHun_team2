@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class CashService {
     private final CashLogRepository cashLogRepository;
 
-    public CashLog addCash(Member member,long price){
+    public CashLog addCash(Member member,long price,EventType eventType){
         CashLog cashLog=CashLog.builder()
                 .member(member)
                 .price(price)
-                .eventType(EventType.CHARGE_FOR_PAYMENT)
+                .eventType(eventType)
                 .build();
 
         cashLogRepository.save(cashLog);

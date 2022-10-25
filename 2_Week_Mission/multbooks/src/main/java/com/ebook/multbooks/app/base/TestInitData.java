@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.base;
 
 import com.ebook.multbooks.app.cart.entity.CartItem;
 import com.ebook.multbooks.app.cart.service.CartService;
+import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.order.entity.Order;
@@ -42,9 +43,9 @@ public class TestInitData {
             //회원1의장바구니로 주문 생성
             Order order1=orderService.createFromCart(member1);
 
-            //각 회원에게 10000원씩 예치금 충전
-            memberService.addCash(member1,10000);
-            memberService.addCash(member2,10000);
+            //각 회원에게 100000원씩 예치금 충전
+            memberService.addCash(member1,100000, EventType.CHARGE_FOR_PAYMENT);
+            memberService.addCash(member2,100000,EventType.CHARGE_FOR_PAYMENT);
         };
     }
 }

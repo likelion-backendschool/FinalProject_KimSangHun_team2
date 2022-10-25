@@ -25,7 +25,6 @@ public class OrderItem extends BaseEntity {
     private int salePrice;//실제판매가
     private int wholesalePrice;//도매가
     private int pgFee;//결제대행사 수수료
-    private int payPrice;//결제금액
     private int refundPrice;//환불금액
     private boolean isPaid;//결제여부
     private int quantity;//상품개수
@@ -34,4 +33,8 @@ public class OrderItem extends BaseEntity {
     private Order order;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
+
+    public int calculatePayPrice(){
+        return salePrice*quantity;
+    }
 }

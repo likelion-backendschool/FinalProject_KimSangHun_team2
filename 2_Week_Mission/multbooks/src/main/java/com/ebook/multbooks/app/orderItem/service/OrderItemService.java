@@ -19,9 +19,10 @@ public class OrderItemService {
                .builder()
                .order(order)
                .product(product)
+               .salePrice(product.getPrice())
                .quantity(quantity)
                .build();
-
        orderItemRepository.save(orderItem);
     }
+
 }
