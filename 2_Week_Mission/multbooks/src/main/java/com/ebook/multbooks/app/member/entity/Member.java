@@ -31,6 +31,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private AuthLevel authLevel;
 
+    private long restCash;
     public void update(String email, String nickname) {
         this.email=email;
         if(this.nickname.equals("")&&!nickname.equals("")){
@@ -44,5 +45,9 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password=password;
+    }
+
+    public void updateRestCash(long newRestCash) {
+        this.restCash=newRestCash;
     }
 }
