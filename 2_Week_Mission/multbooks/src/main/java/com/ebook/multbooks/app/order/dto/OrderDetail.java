@@ -13,8 +13,20 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDetail {
     private Long id;
-    private String subject;
+    private String buyer;
     private int payPrice;
     List<OrderItemDto> orderItems=new ArrayList<>();
+
+
+
+    public String getSubject() {
+        String subject = orderItems.get(0).getSubject();
+
+        if ( orderItems.size() > 1 ) {
+            subject += " 외 %d곡".formatted(orderItems.size() - 1);
+        }
+
+        return subject;
+    }
 
 }

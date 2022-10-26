@@ -34,7 +34,7 @@
             </tr>
             </tbody>
         </table>
-        <div class="flex justify-end">
+        <div th:if="${!#lists.isEmpty(cartItems)}" class="flex justify-end">
             <form action="#" th:action="@{/order/create}" method="post" class="register mt-3 mr-3">
                 <input
                         type="hidden"

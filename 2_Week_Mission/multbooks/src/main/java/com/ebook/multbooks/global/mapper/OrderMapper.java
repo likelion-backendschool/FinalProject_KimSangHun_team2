@@ -3,13 +3,18 @@ package com.ebook.multbooks.global.mapper;
 import com.ebook.multbooks.app.order.dto.OrderDetail;
 import com.ebook.multbooks.app.orderItem.dto.OrderItemDto;
 import com.ebook.multbooks.app.order.entity.Order;
+import com.ebook.multbooks.global.rq.Rq;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Component
+@RequiredArgsConstructor
 public class OrderMapper {
-
+    private final Rq rq;
     public OrderDetail orderToOrderDetail(Order order){
         List<OrderItemDto> orderItems=new ArrayList<>();
         orderItems=order.getOrderItems().stream()
@@ -28,7 +33,7 @@ public class OrderMapper {
         OrderDetail orderDetail=OrderDetail.builder()
                 .orderItems(orderItems)
                 .id(order.getId())
-                .subject(order.getName())
+                .buyer(rq.getMember().getUsername())
                 .payPrice(payPrice)
                 .build();
         return orderDetail;
