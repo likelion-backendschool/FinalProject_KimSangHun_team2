@@ -85,4 +85,8 @@ public class OrderService {
     public List<Order > getOrdersByMember(Member member) {
         return orderRepository.findByMember(member);
     }
+
+    public boolean actorCanAccess(Member actor, Order order) {
+        return actor.getId().equals(order.getMember().getId());
+    }
 }

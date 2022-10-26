@@ -1,8 +1,11 @@
 package com.ebook.multbooks.app.order.controller;
 
+import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.order.dto.OrderDetail;
 import com.ebook.multbooks.app.order.entity.Order;
+import com.ebook.multbooks.app.order.exception.ActorCanNotOrderAccessException;
 import com.ebook.multbooks.app.order.service.OrderService;
+import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.global.mapper.OrderMapper;
 import com.ebook.multbooks.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +27,7 @@ public class OrderController {
     private final OrderService orderService;
     private final Rq rq;
 
-    private final OrderMapper orderMapper=new OrderMapper();
+    private final OrderMapper orderMapper;
 
     /**
      * 주문 생성
@@ -38,11 +41,18 @@ public class OrderController {
 
     /**
      * 주문 상세
+     * 주문 상세페이지는  orderId 로 접근하기 때문에
+     * 예측이 가능해 조건문이 필요
      * */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id,Model model){
         Order order=orderService.getOrderById(id);
+        Member actor=rq.getMember();
+
+        if(orderService.actorCanAccess(actor,order)==false){
+            throw  new ActorCanNotOrderAccessException();
+        }
         OrderDetail orderDetail=orderMapper.orderToOrderDetail(order);
         model.addAttribute("order",orderDetail);
         return "order/detail";
@@ -74,7 +84,8 @@ public class OrderController {
      * */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/pay")
-    public String pay(){
+    public String pay(@PathVariable Long id){
+
     return "";
     }
     /**
