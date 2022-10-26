@@ -54,6 +54,9 @@ public class Order extends BaseEntity {
     }
 
     public void paymentDone(int payPrice) {
+        for(OrderItem orderItem:orderItems){
+            orderItem.paymentDone();
+        }
         payDate=LocalDateTime.now();
         isPaid=true;
         this.payPrice=payPrice;
@@ -64,5 +67,20 @@ public class Order extends BaseEntity {
         for(OrderItem orderItem:orderItems){
             orderItem.refund();
         }
+    }
+
+    public void makeName() {
+        String name = orderItems.get(0).getProduct().getSubject();
+
+        if (orderItems.size() > 1) {
+            name += " 외 %d곡".formatted(orderItems.size() - 1);
+        }
+
+        this.name = name;
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.updateOrder(this);
     }
 }

@@ -1,5 +1,6 @@
 package com.ebook.multbooks.app.base;
 
+import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
@@ -24,6 +25,11 @@ public class DevInitData {
            Member member1=memberService.join("user1",password,"user1@test.com","author1");
            Member member2=memberService.join("user2",password,"user2@test.com","author2");
            Member member3=memberService.join("user3",password,"user3@test.com","");
+
+           //회원 3명 예치금 10만원 충전
+           memberService.addCash(member1,100000, EventType.CHARGE_FOR_PAYMENT);
+           memberService.addCash(member2,100000, EventType.CHARGE_FOR_PAYMENT);
+           memberService.addCash(member3,100000, EventType.CHARGE_FOR_PAYMENT);
 
             //작가 회원들이 1개씩 글쓰기
            Post post1=postService.writePost(member1.getUsername(),new PostWriteForm("글제목1","글내용1","글내용1","#마법 #기사"));

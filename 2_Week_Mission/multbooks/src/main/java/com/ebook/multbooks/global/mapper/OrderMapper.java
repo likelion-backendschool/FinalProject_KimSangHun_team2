@@ -33,6 +33,7 @@ public class OrderMapper {
         OrderDetail orderDetail=OrderDetail.builder()
                 .orderItems(orderItems)
                 .id(order.getId())
+                .name(order.getName())
                 .buyer(rq.getMember().getUsername())
                 .payPrice(payPrice)
                 .build();

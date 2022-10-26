@@ -14,19 +14,8 @@ import java.util.List;
 public class OrderDetail {
     private Long id;
     private String buyer;
+    private String name;
     private int payPrice;
     List<OrderItemDto> orderItems=new ArrayList<>();
-
-
-
-    public String getSubject() {
-        String subject = orderItems.get(0).getSubject();
-
-        if ( orderItems.size() > 1 ) {
-            subject += " 외 %d곡".formatted(orderItems.size() - 1);
-        }
-
-        return subject;
-    }
 
 }

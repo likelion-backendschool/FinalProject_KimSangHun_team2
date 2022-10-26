@@ -13,8 +13,6 @@ import com.ebook.multbooks.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,18 +34,18 @@ public class OrderService {
         List<CartItem> cartItems=cartService.getCartItemsByMember(member);
 
         Order order=Order.builder()
-                .name("카트주문_"+ LocalDateTime.now())
                 .member(member)
                 .build();
-
         orderRepository.save(order);
 
-        //상품을 주문상품으로 변경후 장바구니 비우기
+        //장바구니 상품을 주문 상품으로 변경후 장바구니 비우기
         for(CartItem cartItem:cartItems){
             Product product=cartItem.getProduct();
             orderItemService.addItem(order,product,cartItem.getQuantity());
             cartService.removeItem(cartItem);
         }
+
+        order.makeName();
 
        return order;
     }
@@ -71,6 +69,18 @@ public class OrderService {
     }
 
     @Transactional
+    public void payByTossPayments(Order order){
+        Member buyer = order.getMember();
+        int payPrice = order.calculatePayPrice();
+
+        memberService.addCash(buyer, payPrice, EventType.CHARGE_FOR_PAYMENT);
+        memberService.addCash(buyer, payPrice * -1, EventType.PAYMENT);
+
+        order.paymentDone(payPrice);
+        orderRepository.save(order);
+    }
+
+    @Transactional
     public void refund(Order order) {
         int payPrice=order.getPayPrice();
         memberService.addCash(order.getMember(),payPrice,EventType.CHARGE_FOR_REFUND);
@@ -82,11 +92,12 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(()->new OrderNotFoundException());
     }
 
-    public List<Order > getOrdersByMember(Member member) {
-        return orderRepository.findByMember(member);
-    }
 
     public boolean actorCanAccess(Member actor, Order order) {
         return actor.getId().equals(order.getMember().getId());
+    }
+
+    public List<Order> getOrdersByMemberAndisPaidFalse(Member member) {
+        return orderRepository.findByMemberAndIsPaidFalse(member);
     }
 }

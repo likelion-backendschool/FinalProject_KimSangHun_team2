@@ -14,14 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderItemService {
     private final OrderItemRepository orderItemRepository;
+    @Transactional
     public void addItem(Order order, Product product,int quantity) {
        OrderItem orderItem=OrderItem
                .builder()
-               .order(order)
                .product(product)
                .salePrice(product.getPrice())
                .quantity(quantity)
                .build();
+
+        order.addOrderItem(orderItem);
+
        orderItemRepository.save(orderItem);
     }
 
