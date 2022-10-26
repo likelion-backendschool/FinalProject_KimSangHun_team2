@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.order.entity.Order;
+import com.ebook.multbooks.app.order.exception.OrderNotFoundException;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.orderItem.service.OrderItemService;
 import com.ebook.multbooks.app.product.entity.Product;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,17 +30,19 @@ public class OrderService {
      * 장바구니에 있는 상품 주문 하기
      * 생성순서는 order->orderItem 순으로 생성
      * */
+    @ Transactional
     public Order createFromCart(Member member){
-
+        //회원이 고른상품 장바구니에서 가져오기
         List<CartItem> cartItems=cartService.getCartItemsByMember(member);
 
         Order order=Order.builder()
-                .name("카트주문"+member.getId())
+                .name("카트주문_"+ LocalDateTime.now())
                 .member(member)
                 .build();
 
         orderRepository.save(order);
 
+        //상품을 주문상품으로 변경후 장바구니 비우기
         for(CartItem cartItem:cartItems){
             Product product=cartItem.getProduct();
             orderItemService.addItem(order,product,cartItem.getQuantity());
@@ -74,4 +78,11 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id).orElseThrow(()->new OrderNotFoundException());
+    }
+
+    public List<Order > getOrdersByMember(Member member) {
+        return orderRepository.findByMember(member);
+    }
 }
