@@ -25,13 +25,20 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     private final ProductMapper productMapper;
-    public Product createProduct(Member author, String subject, int price, Long postKeywordId) {
+    /**
+     *
+     * wholesalePrice 를 매개변수로받고
+     * price,salePrice=>4배,3배 로 가격 설정
+     * */
+    public Product createProduct(Member author, String subject, int wholesalePrice, Long postKeywordId) {
         PostKeyword postKeyword=postKeywordService.getKeywordById(postKeywordId);
         Product product=Product.builder()
                 .author(author)
                 .subject(subject)
                 .postKeyword(postKeyword)
-                .price(price)
+                .price(wholesalePrice*4)
+                .wholesalePrice(wholesalePrice)
+                .salePrice(wholesalePrice*3)
                 .build();
         productRepository.save(product);
         return product;

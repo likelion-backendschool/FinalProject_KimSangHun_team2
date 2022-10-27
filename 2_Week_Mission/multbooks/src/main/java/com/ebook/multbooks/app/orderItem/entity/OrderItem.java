@@ -52,4 +52,8 @@ public class OrderItem extends BaseEntity {
     public void updateOrder(Order order) {
         this.order=order;
     }
+
+    public void updateQuantity(int quantity) {
+        this.quantity=quantity;
+    }
 }

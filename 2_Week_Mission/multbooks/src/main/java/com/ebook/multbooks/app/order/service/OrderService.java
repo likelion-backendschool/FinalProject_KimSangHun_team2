@@ -8,8 +8,10 @@ import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.exception.OrderNotFoundException;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
+import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.orderItem.service.OrderItemService;
 import com.ebook.multbooks.app.product.entity.Product;
+import com.ebook.multbooks.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +26,22 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     private final MemberService memberService;
+
+    private final Rq rq;
+
     /**
      * 장바구니에 있는 상품 주문 하기
      * 생성순서는 order->orderItem 순으로 생성
      * */
-    @ Transactional
-    public Order createFromCart(Member member){
+    public Order createOrderFromCart(Member member){
         //회원이 고른상품 장바구니에서 가져오기
         List<CartItem> cartItems=cartService.getCartItemsByMember(member);
 
         Order order=Order.builder()
                 .member(member)
                 .build();
-        orderRepository.save(order);
+
+
 
         //장바구니 상품을 주문 상품으로 변경후 장바구니 비우기
         for(CartItem cartItem:cartItems){
@@ -47,8 +52,28 @@ public class OrderService {
 
         order.makeName();
 
+        orderRepository.save(order);
        return order;
     }
+
+    /**
+     * 즉시 주문(1개)
+     * */
+    public Order createOrder(Member member,Product product){
+
+        Order order=Order.builder()
+                .member(member)
+                .build();
+
+        OrderItem orderItem=orderItemService.createOrderItem(product);
+
+        order.addOrderItem(orderItem);
+
+        order.makeName();
+
+        return orderRepository.save(order);
+    }
+
     @Transactional
     public void payByRestCash(Order order){
         //구매자

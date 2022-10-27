@@ -7,6 +7,9 @@ import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.order.service.OrderService;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.orderItem.repository.OrderItemRepository;
+import com.ebook.multbooks.app.product.entity.Product;
+import com.ebook.multbooks.app.product.repository.ProductRepository;
+import com.ebook.multbooks.app.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +37,15 @@ public class OrderServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
     @Test
-    @DisplayName("createFromCart 테스트")
+    @DisplayName("createOrderFromCart 테스트")
     public void  t1(){
         Member member=memberRepository.findByUsername("user1").get();
-        Order order=orderService.createFromCart(member);
-        assertThat(orderItemRepository.findAll().size()).isGreaterThanOrEqualTo(2);
+        Order order=orderService.createOrderFromCart(member);
+        assertThat(order.getMember()).isEqualTo(member);
     }
     @Test
     @DisplayName("payByResCash 테스트")
@@ -60,6 +66,18 @@ public class OrderServiceTest {
             assertThat(orderItem.getRefundPrice()).isGreaterThanOrEqualTo(0);
         }
         assertThat(order.getMember().getRestCash()).isEqualTo(100000);
+    }
+
+    @Test
+    @Rollback(value = false)
+    @DisplayName("즉시 주문")
+    public void createOrder(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Product product=productRepository.findBySubject("도서1").get();
+        Order order=orderService.createOrder(member,product);
+        assertThat(order).isNotEqualTo(null);
+        assertThat(order.getMember()).isEqualTo(member);
+        assertThat(order.getOrderItems().get(0).getProduct()).isEqualTo(product);
     }
 
 }

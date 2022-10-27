@@ -41,7 +41,7 @@ public class TestInitData {
             CartItem cartItem2 =cartService.addItem(member1,product2,3);
 
             //회원1의장바구니로 주문 생성
-            Order order1=orderService.createFromCart(member1);
+            Order order1=orderService.createOrderFromCart(member1);
 
             //각 회원에게 100000원씩 예치금 충전
             memberService.addCash(member1,100000, EventType.CHARGE_FOR_PAYMENT);

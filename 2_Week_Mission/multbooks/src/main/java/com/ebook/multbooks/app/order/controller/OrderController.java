@@ -44,7 +44,7 @@ public class OrderController {
      * */
     @PostMapping("/create")
     public String create(){
-       Order order= orderService.createFromCart(rq.getMember());
+       Order order= orderService.createOrderFromCart(rq.getMember());
         return "redirect:/order/"+order.getId();
     }
 

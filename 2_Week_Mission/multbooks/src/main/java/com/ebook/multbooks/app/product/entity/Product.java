@@ -19,7 +19,12 @@ public class Product extends BaseEntity {
 
     private String subject;
 
+    //기존판매가
     private int price;
+    //도매가
+    private int wholesalePrice;
+    //할인판매가
+    private int salePrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
