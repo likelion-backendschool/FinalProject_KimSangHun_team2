@@ -20,18 +20,16 @@ public class CartService {
     private final CartMapper cartMapper;
 
     @Transactional
-    public CartItem addItem(Member member, Product product,int quantity){
+    public CartItem addItem(Member member, Product product){
         CartItem oldCartItem =getItemByMemberAndProduct(member,product);
 
         if(oldCartItem!=null){
-            oldCartItem.addQuantity(quantity);
             return oldCartItem;
         }
 
         CartItem cartItem=CartItem.builder()
                 .member(member)
                 .product(product)
-                .quantity(quantity)
                 .build();
 
         cartItemRepository.save(cartItem);

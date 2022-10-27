@@ -37,8 +37,8 @@ public class TestInitData {
             Product product2=productService.createProduct(member2,"도서2",2000,3L);//자신의 글의 키워드 중 로맨스 키워드를 가지는 도서 생성
 
             //회원1 장바구니 에 상품 추가
-            CartItem cartItem1 =cartService.addItem(member1,product1,2);
-            CartItem cartItem2 =cartService.addItem(member1,product2,3);
+            CartItem cartItem1 =cartService.addItem(member1,product1);
+            CartItem cartItem2 =cartService.addItem(member1,product2);
 
             //회원1의장바구니로 주문 생성
             Order order1=orderService.createOrderFromCart(member1);

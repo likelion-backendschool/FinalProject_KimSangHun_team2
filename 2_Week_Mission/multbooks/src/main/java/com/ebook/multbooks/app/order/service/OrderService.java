@@ -33,6 +33,7 @@ public class OrderService {
      * 장바구니에 있는 상품 주문 하기
      * 생성순서는 order->orderItem 순으로 생성
      * */
+    @Transactional
     public Order createOrderFromCart(Member member){
         //회원이 고른상품 장바구니에서 가져오기
         List<CartItem> cartItems=cartService.getCartItemsByMember(member);
@@ -41,17 +42,16 @@ public class OrderService {
                 .member(member)
                 .build();
 
-
+        orderRepository.save(order);
 
         //장바구니 상품을 주문 상품으로 변경후 장바구니 비우기
         for(CartItem cartItem:cartItems){
             Product product=cartItem.getProduct();
-            orderItemService.addItem(order,product,cartItem.getQuantity());
+            orderItemService.addItem(order,product);
             cartService.removeItem(cartItem);
         }
 
         order.makeName();
-
         orderRepository.save(order);
        return order;
     }

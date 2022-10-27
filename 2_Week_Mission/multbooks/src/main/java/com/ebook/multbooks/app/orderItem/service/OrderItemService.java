@@ -15,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderItemService {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
-    @Transactional
-    public void addItem(Order order, Product product,int quantity) {
+
+    public void addItem(Order order, Product product) {
         OrderItem orderItem=createOrderItem(product);
-         orderItem.updateQuantity(quantity);
          orderItemRepository.save(orderItem);
 
         order.addOrderItem(orderItem);
@@ -33,7 +32,6 @@ public class OrderItemService {
             .price(product.getPrice())
             .wholesalePrice(product.getWholesalePrice())
             .salePrice(product.getSalePrice())
-            .quantity(1)
             .build();
 
         return orderItem;

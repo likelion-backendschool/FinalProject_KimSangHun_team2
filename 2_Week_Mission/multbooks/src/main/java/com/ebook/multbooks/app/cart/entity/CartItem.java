@@ -23,11 +23,4 @@ public class CartItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-    //memberId 와 productId가 일치하는 것은 중복 이기 때문에
-    // 개수를 저장할 quantity
-    private int quantity;
-
-    public void addQuantity(int quantity) {
-        this.quantity+=quantity;
-    }
 }

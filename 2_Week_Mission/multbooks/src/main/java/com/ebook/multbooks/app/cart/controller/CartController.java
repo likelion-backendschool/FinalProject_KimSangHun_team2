@@ -37,7 +37,7 @@ public class CartController {
     @PreAuthorize("isAuthenticated()")
     public String addItem(@PathVariable Long productId){
         Product product = productService.getProductById(productId);
-        cartService.addItem(rq.getMember(),product,1);
+        cartService.addItem(rq.getMember(),product);
         return "redirect:/cart/list";
     }
 
