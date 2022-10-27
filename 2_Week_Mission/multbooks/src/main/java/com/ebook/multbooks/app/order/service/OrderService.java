@@ -91,6 +91,7 @@ public class OrderService {
 
         //주문의 상태 속성 변경
         order.paymentDone(payPrice);
+        orderRepository.save(order);
     }
 
     @Transactional
@@ -122,7 +123,7 @@ public class OrderService {
         return actor.getId().equals(order.getMember().getId());
     }
 
-    public List<Order> getOrdersByMemberAndisPaidFalse(Member member) {
+    public List<Order> getOrdersByMemberAndIsPaidFalse(Member member) {
         return orderRepository.findByMemberAndIsPaidFalse(member);
     }
 }

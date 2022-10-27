@@ -47,8 +47,6 @@ public class TestInitData {
             memberService.addCash(member1,100000, EventType.CHARGE_FOR_PAYMENT);
             memberService.addCash(member2,100000,EventType.CHARGE_FOR_PAYMENT);
 
-            //주문1번을 결제
-            orderService.payByRestCash(order1);
 
 
         };

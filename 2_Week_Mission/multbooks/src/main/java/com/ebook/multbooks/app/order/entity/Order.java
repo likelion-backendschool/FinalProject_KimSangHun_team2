@@ -43,7 +43,7 @@ public class Order extends BaseEntity {
      * 주문의 모든 주문 상품의
      * 결제금액 총액 구하는 메서드
      *
-     * 이 메서드  총액계산 쿼리를 생략함
+     * 이 메서드는 총액계산 쿼리를 생략함
      * */
     public int calculatePayPrice(){
         int payPrice=0;

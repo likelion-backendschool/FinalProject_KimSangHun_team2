@@ -48,17 +48,19 @@ public class OrderServiceTest {
         assertThat(order.getMember()).isEqualTo(member);
     }
     @Test
-    @DisplayName("payByResCash 테스트")
+    @DisplayName("payByRestCash 테스트")
     public void  t2(){
-        Order order=orderRepository.findByName("카트주문1").orElse(null);
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
         orderService.payByRestCash(order);
-        assertThat(order.getPayPrice()).isNotEqualTo(0);
+        assertThat(100000-member.getRestCash()).isEqualTo(order.getPayPrice());
     }
 
     @Test
     @DisplayName("refund 테스트")
     public void  t3(){
-        Order order=orderRepository.findByName("카트주문1").orElse(null);
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
         orderService.payByRestCash(order);
         orderService.refund(order);
         assertThat(order.isRefunded()).isEqualTo(true);
@@ -69,7 +71,6 @@ public class OrderServiceTest {
     }
 
     @Test
-    @Rollback(value = false)
     @DisplayName("즉시 주문")
     public void createOrder(){
         Member member=memberRepository.findByUsername("user1").get();

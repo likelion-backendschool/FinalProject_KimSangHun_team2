@@ -43,7 +43,7 @@ public class OrderItem extends BaseEntity {
     }
 
     public void paymentDone() {
-        this.pgFee = 0;
+        this.pgFee = (int)Math.round(salePrice*0.1);
         this.payPrice = getSalePrice();
         this.isPaid = true;
         this.payDate = LocalDateTime.now();
