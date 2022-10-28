@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.order.dto.OrderDetail;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.exception.ActorCanNotOrderAccessException;
 import com.ebook.multbooks.app.order.service.OrderService;
+import com.ebook.multbooks.app.order.service.PayService;
 import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.global.mapper.OrderMapper;
 import com.ebook.multbooks.global.rq.Rq;
@@ -36,7 +37,7 @@ public class OrderController {
     private final ObjectMapper objectMapper;
 
     private final RestTemplate restTemplate=new RestTemplate();
-
+    private final PayService payService;
     private final String SECRET_KEY="test_sk_N5OWRapdA8d7YZ4Qvvbro1zEqZKL";
 
     /**
@@ -105,7 +106,7 @@ public class OrderController {
     @PostMapping("/{id}/payCash")
     public String payCash(@PathVariable Long id,Model model){
         Order order=orderService.getOrderById(id);
-        orderService.payByRestCash(order);
+       payService.payByRestCash(order);
         model.addAttribute("orderId",order.getName());
         return "order/success";
     }
@@ -135,7 +136,7 @@ public class OrderController {
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
 
             Order order=orderService.getOrderById(id);
-            orderService.payByTossPayments(order);
+            payService.payByTossPayments(order);
 
             JsonNode successNode = responseEntity.getBody();
             model.addAttribute("orderId", successNode.get("orderId").asText());

@@ -20,7 +20,7 @@ public class OrderMapper {
         orderItems=order.getOrderItems().stream()
                 .map(orderItem ->OrderItemDto.builder()
                         .subject(orderItem.getProduct().getSubject())
-                        .price(orderItem.getProduct().getPrice())
+                        .price(orderItem.getProduct().getSalePrice())
                         .build())
                 .collect(Collectors.toList());
 

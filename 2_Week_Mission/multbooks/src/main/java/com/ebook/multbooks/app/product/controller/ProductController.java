@@ -44,7 +44,7 @@ public class ProductController {
             return "redirect:/product/create";
         }
         Member author=rq.getMember();
-        Product product=productService.createProduct(author,productForm.getSubject(),productForm.getPrice(),productForm.getPostKeywordId());
+        Product product=productService.createProduct(author,productForm.getSubject(),productForm.getSalePrice(),productForm.getPostKeywordId());
         return "redirect:/product/"+product.getId();
     }
 

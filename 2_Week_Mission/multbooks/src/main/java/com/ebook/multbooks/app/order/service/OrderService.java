@@ -16,7 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-
+/**
+ *
+ * 주문 서비스
+ * */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -47,7 +50,8 @@ public class OrderService {
         //장바구니 상품을 주문 상품으로 변경후 장바구니 비우기
         for(CartItem cartItem:cartItems){
             Product product=cartItem.getProduct();
-            orderItemService.addItem(order,product);
+            OrderItem orderItem=orderItemService.createOrderItem(product);
+            order.addOrderItem(orderItem);
             cartService.removeItem(cartItem);
         }
 
@@ -57,7 +61,7 @@ public class OrderService {
     }
 
     /**
-     * 즉시 주문(1개)
+     * 장바구니 없이 즉시 주문(상품 개수는 1개)
      * */
     public Order createOrder(Member member,Product product){
 
@@ -74,45 +78,6 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    @Transactional
-    public void payByRestCash(Order order){
-        //구매자
-        Member buyer=order.getMember();
-
-        long restCash=buyer.getRestCash();
-        int payPrice=order.calculatePayPrice();
-
-        //예치금보다 결제금액이 높은경우
-        if(restCash<payPrice){
-            throw new RuntimeException("예치금이 부족합니다.");
-        }
-        //결제
-        memberService.addCash(buyer,payPrice*-1, EventType.PAYMENT);
-
-        //주문의 상태 속성 변경
-        order.paymentDone(payPrice);
-        orderRepository.save(order);
-    }
-
-    @Transactional
-    public void payByTossPayments(Order order){
-        Member buyer = order.getMember();
-        int payPrice = order.calculatePayPrice();
-
-        memberService.addCash(buyer, payPrice, EventType.CHARGE_FOR_PAYMENT);
-        memberService.addCash(buyer, payPrice * -1, EventType.PAYMENT);
-
-        order.paymentDone(payPrice);
-        orderRepository.save(order);
-    }
-
-    @Transactional
-    public void refund(Order order) {
-        int payPrice=order.getPayPrice();
-        memberService.addCash(order.getMember(),payPrice,EventType.CHARGE_FOR_REFUND);
-        order.refund();
-        orderRepository.save(order);
-    }
 
     public Order getOrderById(Long id) {
         return orderRepository.findById(id).orElseThrow(()->new OrderNotFoundException());

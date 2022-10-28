@@ -22,7 +22,7 @@
       <tbody>
       <tr th:each="order, loop : ${orders}" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
 
-        <td  class="py-4 px-6 hover:bg-sky-100 "><a th:href="@{|${order.id}|}" th:text="${order.subject}" class="hover:text-black"></a></td>
+        <td  class="py-4 px-6 hover:bg-sky-100 "><a th:href="@{|${order.id}|}" th:text="${order.name}" class="hover:text-black"></a></td>
         <td th:text="${order.payPrice}" class="py-4 px-6"></td>
       </a>      </tr>
       </tbody>

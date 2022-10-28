@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.member.repository.MemberRepository;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.order.service.OrderService;
+import com.ebook.multbooks.app.order.service.PayService;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.orderItem.repository.OrderItemRepository;
 import com.ebook.multbooks.app.product.entity.Product;
@@ -27,6 +28,10 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class OrderServiceTest {
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private PayService payService;
+
 
     @Autowired
     private MemberRepository memberRepository;
@@ -52,7 +57,7 @@ public class OrderServiceTest {
     public void  t2(){
         Member member=memberRepository.findByUsername("user1").get();
         Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
-        orderService.payByRestCash(order);
+        payService.payByRestCash(order);
         assertThat(100000-member.getRestCash()).isEqualTo(order.getPayPrice());
     }
 
@@ -61,8 +66,8 @@ public class OrderServiceTest {
     public void  t3(){
         Member member=memberRepository.findByUsername("user1").get();
         Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
-        orderService.payByRestCash(order);
-        orderService.refund(order);
+        payService.payByRestCash(order);
+        payService.refund(order);
         assertThat(order.isRefunded()).isEqualTo(true);
         for(OrderItem orderItem:order.getOrderItems()){
             assertThat(orderItem.getRefundPrice()).isGreaterThanOrEqualTo(0);

@@ -66,7 +66,7 @@ public class ProductService {
     public Product modifyProduct(Long productId, ProductModifyForm productModifyForm) {
         Product product=getProductById(productId);
         String subject=productModifyForm.getSubject();
-        int price=productModifyForm.getPrice();
+        int price=productModifyForm.getSalePrice();
         product.update(subject,price);
         return product;
     }

@@ -9,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class ProductModifyForm {
     private String subject;
-    private int price;
+    private int salePrice;
 }

@@ -11,7 +11,7 @@ public class ProductDetailDto {
     private Long id;
     private String subject;
 
-    private int price;
+    private int salePrice;
 
     private String author;
 }

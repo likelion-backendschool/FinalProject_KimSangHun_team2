@@ -26,7 +26,7 @@
             <tr th:each="cartItem, loop : ${cartItems}" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <td th:text="${loop.index+1}" class="py-4 px-6"></td>
                 <td th:text="${cartItem.productSubject}" class="py-4 px-6"></td>
-                <td th:text="${cartItem.price}" class="py-4 px-6"></td>
+                <td th:text="${cartItem.salePrice}" class="py-4 px-6"></td>
             </tr>
             </tbody>
         </table>

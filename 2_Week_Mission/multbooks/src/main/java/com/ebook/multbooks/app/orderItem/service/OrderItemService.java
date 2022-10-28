@@ -16,15 +16,6 @@ public class OrderItemService {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
 
-    public void addItem(Order order, Product product) {
-        OrderItem orderItem=createOrderItem(product);
-         orderItemRepository.save(orderItem);
-
-        order.addOrderItem(orderItem);
-        orderRepository.save(order);
-
-    }
-
     public OrderItem createOrderItem(Product product) {
 
         OrderItem orderItem=OrderItem.builder()
