@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.order.entity;
 
 import com.ebook.multbooks.app.base.entity.BaseEntity;
 import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.app.order.entity.readystatus.ReadyStatus;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,9 +25,10 @@ import java.util.List;
 public class Order extends BaseEntity {
 
     private LocalDateTime payDate;//결제날짜
-    private boolean readyStatus;//주문 완료 여부
+    private ReadyStatus readyStatus;//주문 완료 여부
     private int payPrice; // 결제금액
     private boolean isPaid;//결제 완료 여부
+
     private boolean isCanceled;//취소 여부
     private boolean isRefunded;//환불 여부
     private String name;//주문명
@@ -60,10 +62,12 @@ public class Order extends BaseEntity {
         payDate=LocalDateTime.now();
         isPaid=true;
         this.payPrice=payPrice;
+        readyStatus=ReadyStatus.SUCCESS;
     }
 
     public void refund() {
         isRefunded=true;
+        readyStatus=ReadyStatus.CANCEL;
         for(OrderItem orderItem:orderItems){
             orderItem.refund();
         }
@@ -82,5 +86,10 @@ public class Order extends BaseEntity {
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.updateOrder(this);
+    }
+
+    public void cancel() {
+        this.isCanceled=true;
+        this.readyStatus=ReadyStatus.CANCEL;
     }
 }

@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.order.entity.Order;
+import com.ebook.multbooks.app.order.entity.readystatus.ReadyStatus;
 import com.ebook.multbooks.app.order.exception.OrderNotFoundException;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
@@ -28,6 +29,7 @@ public class OrderService {
     private final OrderItemService orderItemService;
     private final OrderRepository orderRepository;
 
+
     private final MemberService memberService;
 
     private final Rq rq;
@@ -36,12 +38,12 @@ public class OrderService {
      * 장바구니에 있는 상품 주문 하기
      * 생성순서는 order->orderItem 순으로 생성
      * */
-    @Transactional
     public Order createOrderFromCart(Member member){
         //회원이 고른상품 장바구니에서 가져오기
         List<CartItem> cartItems=cartService.getCartItemsByMember(member);
 
         Order order=Order.builder()
+                .readyStatus(ReadyStatus.READY)
                 .member(member)
                 .build();
 
@@ -66,6 +68,7 @@ public class OrderService {
     public Order createOrder(Member member,Product product){
 
         Order order=Order.builder()
+                .readyStatus(ReadyStatus.READY)
                 .member(member)
                 .build();
 
@@ -76,6 +79,13 @@ public class OrderService {
         order.makeName();
 
         return orderRepository.save(order);
+    }
+
+    //주문 취소
+    @Transactional
+    public void cancelOrder(Long orderId){
+    Order order=getOrderById(orderId);
+    order.cancel();
     }
 
 

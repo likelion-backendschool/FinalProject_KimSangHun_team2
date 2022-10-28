@@ -3,6 +3,7 @@ package com.ebook.multbooks.order;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
 import com.ebook.multbooks.app.order.entity.Order;
+import com.ebook.multbooks.app.order.entity.readystatus.ReadyStatus;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.order.service.OrderService;
 import com.ebook.multbooks.app.order.service.PayService;
@@ -46,14 +47,14 @@ public class OrderServiceTest {
     private ProductRepository productRepository;
 
     @Test
-    @DisplayName("createOrderFromCart 테스트")
+    @DisplayName("장바구니주문 테스트")
     public void  t1(){
         Member member=memberRepository.findByUsername("user1").get();
         Order order=orderService.createOrderFromCart(member);
         assertThat(order.getMember()).isEqualTo(member);
     }
     @Test
-    @DisplayName("payByRestCash 테스트")
+    @DisplayName("예치금 결제 테스트")
     public void  t2(){
         Member member=memberRepository.findByUsername("user1").get();
         Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
@@ -62,7 +63,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("refund 테스트")
+    @DisplayName("환불 테스트")
     public void  t3(){
         Member member=memberRepository.findByUsername("user1").get();
         Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
@@ -84,6 +85,20 @@ public class OrderServiceTest {
         assertThat(order).isNotEqualTo(null);
         assertThat(order.getMember()).isEqualTo(member);
         assertThat(order.getOrderItems().get(0).getProduct()).isEqualTo(product);
+    }
+
+    @Test
+    @DisplayName("주문 취소")
+    public void cancel(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Product product=productRepository.findBySubject("도서1").get();
+        Order order=orderService.createOrder(member,product);
+        //준비상태
+        assertThat(order.getReadyStatus()).isEqualTo(ReadyStatus.READY);
+        orderService.cancelOrder(order.getId());
+        //취소 상태
+        assertThat(order.getReadyStatus()).isEqualTo(ReadyStatus.CANCEL);
+        assertThat(order.isCanceled()).isEqualTo(true);
     }
 
 }

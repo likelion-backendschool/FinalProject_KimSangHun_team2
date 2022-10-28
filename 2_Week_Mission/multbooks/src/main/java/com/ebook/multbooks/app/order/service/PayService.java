@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class PayService {
     private final MemberService memberService;
     private final OrderRepository orderRepository;
+
+    //예치금 결제
     @Transactional
     public void payByRestCash(Order order){
         //구매자
@@ -38,6 +40,7 @@ public class PayService {
         orderRepository.save(order);
     }
 
+    //토스결제
     @Transactional
     public void payByTossPayments(Order order){
         Member buyer = order.getMember();
@@ -50,6 +53,7 @@ public class PayService {
         orderRepository.save(order);
     }
 
+    //환불
     @Transactional
     public void refund(Order order) {
         int payPrice=order.getPayPrice();
@@ -57,5 +61,8 @@ public class PayService {
         order.refund();
         orderRepository.save(order);
     }
+
+
+
 
 }

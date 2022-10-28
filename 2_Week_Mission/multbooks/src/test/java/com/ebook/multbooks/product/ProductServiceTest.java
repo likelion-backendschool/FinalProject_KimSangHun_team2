@@ -68,18 +68,18 @@ public class ProductServiceTest {
         Product product=productService.createProduct(member,"상품1",1000,1L);
         ProductModifyForm productModifyForm=productService.getProductModifyFormByProductId(product.getId());
         assertThat(productModifyForm.getSubject()).isEqualTo(product.getSubject());
-        assertThat(productModifyForm.getPrice()).isEqualTo(product.getPrice());
+        assertThat(productModifyForm.getSalePrice()).isEqualTo(product.getPrice());
     }
     @Test
     @DisplayName("modifyProduct 테스트")
     public void t5(){
-        ProductModifyForm productModifyForm =ProductModifyForm.builder().subject("수정").price(10000).build();
+        ProductModifyForm productModifyForm =ProductModifyForm.builder().subject("수정").salePrice(10000).build();
         Member member=memberService.getMemberByUsername("user1");
         Product product=productService.createProduct(member,"상품1",1000,1L);
 
         Product updateProduct=productService.modifyProduct(product.getId(),productModifyForm);
         assertThat(updateProduct.getSubject()).isEqualTo(productModifyForm.getSubject());
-        assertThat(updateProduct.getPrice()).isEqualTo(productModifyForm.getPrice());
+        assertThat(updateProduct.getPrice()).isEqualTo(productModifyForm.getSalePrice());
     }
     @Test
     @DisplayName("deleteProduct 테스트")
