@@ -3,6 +3,7 @@ package com.ebook.multbooks.app.order.service;
 import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.mybook.service.MyBookService;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import java.time.LocalDateTime;
 public class PayService {
     private final MemberService memberService;
     private final OrderRepository orderRepository;
+
+    private final MyBookService myBookService;
 
    /**
     *
@@ -42,6 +45,8 @@ public class PayService {
         //주문의 상태 속성 변경
         order.paymentDone(payPrice);
         orderRepository.save(order);
+        //내책에 추가
+        myBookService.addMyBook(order);
     }
 
     /**
@@ -75,6 +80,8 @@ public class PayService {
             order.paymentDone(payPrice);
             orderRepository.save(order);
         }
+        //내책에 추가
+        myBookService.addMyBook(order);
     }
 
     //환불
@@ -87,6 +94,9 @@ public class PayService {
         memberService.addCash(order.getMember(),payPrice,EventType.CHARGE_FOR_REFUND);
         order.refund();
         orderRepository.save(order);
+
+        //내책에서 제거
+        myBookService.removeMyBook(order);
     }
 
 

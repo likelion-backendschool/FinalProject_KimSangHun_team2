@@ -4,6 +4,7 @@ import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.cash.repository.CashLogRepository;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
+import com.ebook.multbooks.app.mybook.repository.MyBookRepository;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.entity.readystatus.ReadyStatus;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
@@ -48,6 +49,9 @@ public class OrderServiceTest {
     private ProductRepository productRepository;
     @Autowired
     private CashLogRepository cashLogRepository;
+
+    @Autowired
+    private MyBookRepository myBookRepository;
 
     @Test
     @DisplayName("장바구니주문 테스트")
@@ -112,6 +116,11 @@ public class OrderServiceTest {
         Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
         payService.payByTossPayments(order,1000);
         assertThat(cashLogRepository.findByMemberAndEventType(member,EventType.CHARGE_FOR_PAYMENT_TOSS)).isNotNull();
+
+        //my book 관련 테스트 추가
+        assertThat(myBookRepository.findByMember(order.getMember()).size()).isGreaterThanOrEqualTo(1);
+        payService.refund(order);
+        assertThat(myBookRepository.findByMember(order.getMember()).size()).isGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -125,4 +134,5 @@ public class OrderServiceTest {
         assertThat(member.getRestCash()).isEqualTo(108000);
         
     }
+
 }

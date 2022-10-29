@@ -120,7 +120,7 @@ public class OrderController {
        try{
            payService.payByRestCash(order);
        }catch (RuntimeException exception){
-           return "redirect:/order/"+order.getId()+"/?errorMsg="+Util.url.encode("예치금이 부족합니다.");
+           return "redirect:/order/"+order.getId()+"/?errorMsg="+Util.url.encode(exception.getMessage());
        }
         model.addAttribute("orderId",order.getName());
         return "order/success";
