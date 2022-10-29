@@ -28,7 +28,7 @@
       </tr>
       </thead>
       <tbody>
-        <tr th:each="post, loop : ${posts}" th:onclick="|location.href='@{|/post/${post.id}|}'|"class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <tr th:each="post, loop : ${posts}" th:onclick="|location.href='@{|/post/${post.id}|}'|"class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:text-blue-600">
             <td th:text="${loop.index+1}"></td>
             <td th:text="${post.subject}" class="py-4 px-6"></td>
             <td th:text="${post.nickname}" class="py-4 px-6"></td>

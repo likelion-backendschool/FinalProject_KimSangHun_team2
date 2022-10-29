@@ -7,6 +7,9 @@
 <body>
 <main layout:fragment="main">
   <div class="px-24 py-24 flex-grow border-2 border-blue-200">
+    <button onclick="history.back()" class="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      이전페이지
+    </button>
   <h3 class="text-3xl font-bold mb-6 dark:text-white">글 상세보기</h3>
       <div class="mb-6">
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">게시물 번호</label>
@@ -41,11 +44,22 @@
         <a th:href="@{|/post/${postDetail.id}/modify|}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">글 수정</a>
       </div>
       <div>
-        <a onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();" th:href="@{|/post/${postDetail.id}/delete|}"class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">글  삭제</a>
+        <a onclick=" return confirm('정말로 삭제하시겠습니까?'); " th:href="@{|/post/${postDetail.id}/delete|}"class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">글  삭제</a>
       </div>
     </div>
   </div>
 
+  <script language="javascript">
+	<!--
+	function delete_check(url){
+		var answer;
+		answer = confirm("데이터를 삭제하시겠습니까?");
+		if(answer == true){
+			location = url;
+		}
+	}
+	//-->
+	</script>
 </main>
 </body>
 </html>
