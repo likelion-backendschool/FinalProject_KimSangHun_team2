@@ -62,11 +62,11 @@ public class ProductServiceTest {
         assertThat(productListDtos.size()).isGreaterThanOrEqualTo(2);
     }
     @Test
-    @DisplayName("getProductModifyFormByProductId  테스트")
+    @DisplayName("getProductModifyFormByProduct  테스트")
     public void t4(){
         Member member=memberService.getMemberByUsername("user1");
         Product product=productService.createProduct(member,"상품1",1000,1L);
-        ProductModifyForm productModifyForm=productService.getProductModifyFormByProductId(product.getId());
+        ProductModifyForm productModifyForm=productService.getProductModifyFormByProduct(member,product);
         assertThat(productModifyForm.getSubject()).isEqualTo(product.getSubject());
         assertThat(productModifyForm.getSalePrice()).isEqualTo(product.getPrice());
     }

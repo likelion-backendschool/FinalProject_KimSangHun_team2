@@ -8,6 +8,7 @@ import com.ebook.multbooks.app.product.dto.ProductDetailDto;
 import com.ebook.multbooks.app.product.dto.ProductListDto;
 import com.ebook.multbooks.app.product.dto.ProductModifyForm;
 import com.ebook.multbooks.app.product.entity.Product;
+import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.app.product.exception.ProductNotFoundException;
 import com.ebook.multbooks.app.product.repository.ProductRepository;
 import com.ebook.multbooks.global.mapper.ProductMapper;
@@ -58,8 +59,10 @@ public class ProductService {
         return productMapper.productsToProductListDtos(products);
     }
 
-    public ProductModifyForm getProductModifyFormByProductId(Long productId) {
-        Product product=getProductById(productId);
+    public ProductModifyForm getProductModifyFormByProduct(Member actor,Product product) {
+        if(actorCanModify(actor,product)==false){
+            throw  new RuntimeException("도서 수정 권한이 없습니다!");
+        }
         return productMapper.productToProductModifyForm(product);
     }
     @Transactional
