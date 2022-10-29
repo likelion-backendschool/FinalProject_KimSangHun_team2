@@ -109,9 +109,8 @@ public class OrderService {
         return actor.getId().equals(order.getMember().getId());
     }
 
-    public List<Order> getOrdersByMemberAndIsPaidFalse(Member member) {
-        return orderRepository.findByMemberAndIsPaidFalse(member);
+
+    public List<Order> getOrdersByMember(Member member) {
+        return orderRepository.findByMember(member);
     }
-
-
 }

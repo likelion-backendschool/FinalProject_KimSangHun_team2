@@ -17,14 +17,17 @@
         <th scope="col" class="py-3 px-6">
           가격
         </th>
+        <th scope="col" class="py-3 px-6">
+          주문상태
+        </th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="order, loop : ${orders}" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-
-        <td  class="py-4 px-6 hover:bg-sky-100 "><a th:href="@{|${order.id}|}" th:text="${order.name}" class="hover:text-black"></a></td>
-        <td th:text="${order.payPrice}" class="py-4 px-6"></td>
-      </a>      </tr>
+      <tr th:each="order, loop : ${orders}" th:onclick="|location.href='@{|/order/${order.id}|}'|"  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:text-blue-700">
+          <td  th:text="${order.name}"  class="py-4 px-6 "></td>
+          <td th:text="${order.payPrice}" class="py-4 px-6"></td>
+          <td th:text="${order.readyStatus}" class="py-4 px-6"></td>
+      </tr>
       </tbody>
     </table>
   </div>

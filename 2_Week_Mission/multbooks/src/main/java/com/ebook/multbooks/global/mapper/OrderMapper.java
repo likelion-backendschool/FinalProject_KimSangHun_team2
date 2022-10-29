@@ -36,6 +36,7 @@ public class OrderMapper {
                 .name(order.getName())
                 .buyer(rq.getMember().getUsername())
                 .payPrice(payPrice)
+                .readyStatus(order.getReadyStatus().getMessage())
                 .build();
         return orderDetail;
     }

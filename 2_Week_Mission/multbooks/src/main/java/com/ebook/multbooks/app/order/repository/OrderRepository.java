@@ -11,4 +11,6 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     Optional<Order> findByName(String name);
 
     List<Order> findByMemberAndIsPaidFalse(Member member);
+
+    List<Order> findByMember(Member member);
 }

@@ -78,13 +78,11 @@ public class OrderController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(Model model){
-        //결제안된 주문만 가져오기
-        List<Order> orders=orderService.getOrdersByMemberAndIsPaidFalse(rq.getMember());
+        List<Order> orders=orderService.getOrdersByMember(rq.getMember());
         List<OrderDetail>orderDetails=orderMapper.ordersToOrderDetails(orders);
         model.addAttribute("orders",orderDetails);
         return "order/list";
     }
-
     /**
      * 주문 취소
      * */
