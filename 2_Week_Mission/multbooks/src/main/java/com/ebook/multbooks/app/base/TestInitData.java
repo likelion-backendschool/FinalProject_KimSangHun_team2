@@ -40,6 +40,10 @@ public class TestInitData {
             CartItem cartItem1 =cartService.addItem(member1,product1);
             CartItem cartItem2 =cartService.addItem(member1,product2);
 
+            //회원2 장바구니 에 상품 추가
+            CartItem cartItem3=cartService.addItem(member2,product1);
+            CartItem cartItem4 =cartService.addItem(member2,product2);
+
             //회원1의장바구니로 주문 생성
             Order order1=orderService.createOrderFromCart(member1);
 

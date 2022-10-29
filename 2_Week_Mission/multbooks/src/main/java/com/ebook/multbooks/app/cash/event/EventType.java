@@ -2,6 +2,7 @@ package com.ebook.multbooks.app.cash.event;
 
 public enum EventType{
     CHARGE_FOR_PAYMENT("상품결제를 위한충전"),
+    CHARGE_FOR_PAYMENT_TOSS("상품결제를 위한충전 TOSS"),
     PAYMENT("상품결제"),
    CHARGE_FOR_REFUND("상품환불로인한 충전"),
     SALES_RECEIVE("도서판매자로서 정산받음"),

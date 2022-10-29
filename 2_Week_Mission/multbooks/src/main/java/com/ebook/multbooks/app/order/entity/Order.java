@@ -25,6 +25,7 @@ import java.util.List;
 public class Order extends BaseEntity {
 
     private LocalDateTime payDate;//결제날짜
+    @Enumerated(EnumType.STRING)
     private ReadyStatus readyStatus;//주문 완료 여부
     private int payPrice; // 결제금액
     private boolean isPaid;//결제 완료 여부

@@ -185,6 +185,10 @@
      if (findPassword_error) {
             errorModal(findPassword_error);
      }
+       const errorMsg= /*[[ ${errorMsg} ]]*/ null;
+        if (errorMsg) {
+            errorModal(errorMsg);
+     }
 
      const editor = new toastui.Editor({
             el: document.querySelector('#editor'),

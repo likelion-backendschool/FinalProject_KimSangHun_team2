@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.cart.service.CartService;
 import com.ebook.multbooks.app.cash.event.EventType;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.order.dto.OrderDetail;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.entity.readystatus.ReadyStatus;
 import com.ebook.multbooks.app.order.exception.OrderNotFoundException;
@@ -12,6 +13,7 @@ import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.orderItem.service.OrderItemService;
 import com.ebook.multbooks.app.product.entity.Product;
+import com.ebook.multbooks.global.mapper.OrderMapper;
 import com.ebook.multbooks.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class OrderService {
     private final OrderItemService orderItemService;
     private final OrderRepository orderRepository;
 
+    private final OrderMapper orderMapper;
 
     private final MemberService memberService;
 
@@ -38,26 +41,26 @@ public class OrderService {
      * 장바구니에 있는 상품 주문 하기
      * 생성순서는 order->orderItem 순으로 생성
      * */
+    @Transactional
     public Order createOrderFromCart(Member member){
-        //회원이 고른상품 장바구니에서 가져오기
+        //장바구니 상품 가져오기
         List<CartItem> cartItems=cartService.getCartItemsByMember(member);
 
         Order order=Order.builder()
                 .readyStatus(ReadyStatus.READY)
                 .member(member)
                 .build();
-
         orderRepository.save(order);
 
         //장바구니 상품을 주문 상품으로 변경후 장바구니 비우기
         for(CartItem cartItem:cartItems){
             Product product=cartItem.getProduct();
-            OrderItem orderItem=orderItemService.createOrderItem(product);
-            order.addOrderItem(orderItem);
+            OrderItem orderItem=orderItemService.createOrderItem(product,order);
             cartService.removeItem(cartItem);
         }
 
         order.makeName();
+
         orderRepository.save(order);
        return order;
     }
@@ -72,7 +75,7 @@ public class OrderService {
                 .member(member)
                 .build();
 
-        OrderItem orderItem=orderItemService.createOrderItem(product);
+        OrderItem orderItem=orderItemService.createOrderItem(product,order);
 
         order.addOrderItem(orderItem);
 
@@ -81,14 +84,22 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    //주문 취소
+   /**
+    *
+    * 주문 취소
+    *
+    * */
     @Transactional
     public void cancelOrder(Long orderId){
     Order order=getOrderById(orderId);
     order.cancel();
     }
-
-
+    /**
+     * 주문 상세
+     * */
+    public OrderDetail getOrderDetail(Order order) {
+       return orderMapper.orderToOrderDetail(order);
+    }
     public Order getOrderById(Long id) {
         return orderRepository.findById(id).orElseThrow(()->new OrderNotFoundException());
     }
@@ -101,4 +112,6 @@ public class OrderService {
     public List<Order> getOrdersByMemberAndIsPaidFalse(Member member) {
         return orderRepository.findByMemberAndIsPaidFalse(member);
     }
+
+
 }

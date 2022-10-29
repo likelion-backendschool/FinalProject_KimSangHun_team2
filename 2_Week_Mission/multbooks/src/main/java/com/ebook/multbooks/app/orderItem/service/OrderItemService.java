@@ -15,8 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderItemService {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
-    @Transactional
-    public OrderItem createOrderItem(Product product) {
+
+    /**
+     *
+     * 주문 상품 추가
+     *
+     * */
+    public OrderItem createOrderItem(Product product,Order order) {
 
         OrderItem orderItem=OrderItem.builder()
             .product(product)
@@ -25,6 +30,7 @@ public class OrderItemService {
             .salePrice(product.getSalePrice())
             .build();
 
+        order.addOrderItem(orderItem);
         orderItemRepository.save(orderItem);
         return orderItem;
     }

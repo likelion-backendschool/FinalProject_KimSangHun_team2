@@ -1,5 +1,7 @@
 package com.ebook.multbooks.order;
 
+import com.ebook.multbooks.app.cash.event.EventType;
+import com.ebook.multbooks.app.cash.repository.CashLogRepository;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
 import com.ebook.multbooks.app.order.entity.Order;
@@ -24,7 +26,6 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
 @ActiveProfiles({"test","secret"})
 public class OrderServiceTest {
     @Autowired
@@ -45,11 +46,13 @@ public class OrderServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private CashLogRepository cashLogRepository;
 
     @Test
     @DisplayName("장바구니주문 테스트")
     public void  t1(){
-        Member member=memberRepository.findByUsername("user1").get();
+        Member member=memberRepository.findByUsername("user2").get();
         Order order=orderService.createOrderFromCart(member);
         assertThat(order.getMember()).isEqualTo(member);
     }
@@ -101,4 +104,25 @@ public class OrderServiceTest {
         assertThat(order.isCanceled()).isEqualTo(true);
     }
 
+    @Test
+    @Rollback(value = false)
+    @DisplayName("토스페이 결제 테스트")
+    public void  tossPay(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
+        payService.payByTossPayments(order,1000);
+        assertThat(cashLogRepository.findByMemberAndEventType(member,EventType.CHARGE_FOR_PAYMENT_TOSS)).isNotNull();
+    }
+
+    @Test
+    @Rollback(value = false)
+    @DisplayName("환불 테스트")
+    public void  refund(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
+        payService.payByTossPayments(order,1000);
+        payService.refund(order);
+        assertThat(member.getRestCash()).isEqualTo(108000);
+        
+    }
 }
