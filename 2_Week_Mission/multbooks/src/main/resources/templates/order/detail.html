@@ -32,7 +32,7 @@
         <p th:text="|주문상품 합계: ${order.payPrice}|"></p>
       </div>
 
-      <div>
+      <div th:if="${order.readyStatus == '결제준비중'}">
         <form action="#" th:action="@{|/order/${order.id}/payCash|}" method="post" class="register mt-3 mr-3">
           <input
                   type="hidden"

@@ -130,7 +130,7 @@ public class OrderController {
     @GetMapping("/{id}/pay")
     public String payCard(
             @RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount,@PathVariable Long id,
-            int useCash,Model model) throws Exception {
+            @RequestParam(defaultValue = "0") int useCash,Model model) throws Exception {
 
         HttpHeaders headers = new HttpHeaders();
         // headers.setBasicAuth(SECRET_KEY, ""); // spring framework 5.2 이상 버전에서 지원
@@ -149,7 +149,11 @@ public class OrderController {
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
 
             Order order=orderService.getOrderById(id);
-            payService.payByTossPayments(order,useCash);
+            try{
+                payService.payByTossPayments(order,useCash);
+            }catch (RuntimeException exception){
+                return "redirect:/order/"+order.getId()+"/?errorMsg="+Util.url.encode(exception.getMessage());
+            }
 
             JsonNode successNode = responseEntity.getBody();
             model.addAttribute("orderId", successNode.get("orderId").asText());
