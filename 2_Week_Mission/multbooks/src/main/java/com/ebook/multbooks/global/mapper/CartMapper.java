@@ -11,6 +11,7 @@ import java.util.List;
 public interface CartMapper {
     @Mapping(target = "salePrice",source = "product.salePrice")
     @Mapping(target = "productSubject",source = "product.subject")
+    @Mapping(target = "productId",source = "product.id")
     CartListDto cartItemToCartListDto(CartItem cartItem);
     List<CartListDto>cartItemsToCartListDtos(List<CartItem> cartItems);
 }

@@ -1,21 +1,23 @@
 package com.ebook.multbooks.app.product.entity;
 
 import com.ebook.multbooks.app.base.entity.BaseEntity;
+import com.ebook.multbooks.app.base.entity.BaseTimeEntity;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Getter
 @Entity
 @SuperBuilder
 @NoArgsConstructor
-public class Product extends BaseEntity {
+public class Product extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String subject;
 

@@ -59,9 +59,10 @@ public class ProductController {
     }
 
     @GetMapping("/list")
-    public String list(Model model){
+    public String list(Model model,String msg){
         List<ProductListDto>productListDtos= productService.getAllProductListDtosOrderByUpdateDate();
         model.addAttribute("productList",productListDtos);
+        model.addAttribute("msg",msg);
         return "product/list";
     }
     @PreAuthorize("isAuthenticated()")
