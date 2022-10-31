@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html  layout:decorate="~{layout/layout.html}" >
+<head>
+  <meta charset="UTF-8">
+  <title>도서 상세보기</title>
+</head>
+<body>
+<main layout:fragment="main">
+  <div class="px-24 py-24 flex-grow border-2 border-blue-200">
+    <h3 class="text-3xl font-bold mb-6 dark:text-white">도서 상세보기</h3>
+    <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">제목</label>
+    <input type="text"  th:name="${productDetail.subject}" th:value="${productDetail.subject}"class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="제목" readonly >
+    <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">가격</label>
+    <input type="text"  th:name="${productDetail.salePrice}" th:value="${productDetail.salePrice}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="가격" readonly>
+    <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">작가</label>
+    <input type="text"  th:name="${productDetail.author}" th:value="${productDetail.author}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="작가" readonly >
+
+    <div class="flex mt-4">
+      <div class="mr-2 ">
+        <a th:href="@{|/product/${productDetail.id}/modify|}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">도서 수정</a>
+      </div>
+      <div>
+        <a onclick="return confirm('정말로 삭제하시겠습니까?');" th:href="@{|/product/${productDetail.id}/delete|}"class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">도서  삭제</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

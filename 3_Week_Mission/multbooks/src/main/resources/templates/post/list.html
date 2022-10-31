@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html  layout:decorate="~{layout/layout.html}" >
+<head>
+  <meta charset="UTF-8">
+  <title>글 리스트</title>
+</head>
+<body>
+<main layout:fragment="main">
+  <div class="px-24 py-24 overflow-x-auto relative">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <tr>
+        <th scope="col" class="py-3 px-6">
+          번호
+        </th>
+        <th scope="col" class="py-3 px-6">
+          제목
+        </th>
+        <th scope="col" class="py-3 px-6">
+          작성자
+        </th>
+        <th scope="col" class="py-3 px-6">
+          작성날짜
+        </th>
+        <th scope="col" class="py-3 px-6">
+          수정날짜
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr th:each="post, loop : ${posts}" th:onclick="|location.href='@{|/post/${post.id}|}'|"class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:text-blue-600">
+            <td th:text="${loop.index+1}"></td>
+            <td th:text="${post.subject}" class="py-4 px-6"></td>
+            <td th:text="${post.nickname}" class="py-4 px-6"></td>
+            <td th:text="${post.createDate}" class="py-4 px-6"></td>
+            <td th:text="${post.updateDate}" class="py-4 px-6"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
