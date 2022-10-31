@@ -30,6 +30,7 @@ public class DevInitData {
            Member member1=memberService.join("user1",password,"user1@test.com","author1");
            Member member2=memberService.join("user2",password,"user2@test.com","author2");
            Member member3=memberService.join("user3",password,"user3@test.com","");
+           Member member4=memberService.join("admin",password,"admin@test.com","admin");
 
            //회원 3명 예치금 10만원 충전
            memberService.addCash(member1,100000, EventType.CHARGE_FOR_PAYMENT);

@@ -16,8 +16,7 @@ import javax.persistence.*;
 @SuperBuilder
 @NoArgsConstructor
 public class Member extends BaseEntity {
-
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String username;
 
     @Column(nullable = false)

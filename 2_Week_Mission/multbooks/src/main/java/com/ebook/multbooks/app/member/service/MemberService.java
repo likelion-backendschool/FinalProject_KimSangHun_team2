@@ -30,13 +30,25 @@ public class MemberService {
         Member member;
         //작가 명이 있는경우
         if(!nickname.equals("")){
-                    member=Member.builder()
-                    .email(email)
-                    .username(username)
-                    .password(password)
-                    .nickname(nickname)
-                    .authLevel(AuthLevel.AUTHOR)
-                    .build();
+                    //username 이 admin 인경우 admin 권한부여
+                    if(nickname=="admin"){
+                        member=Member.builder()
+                                .email(email)
+                                .username(username)
+                                .password(password)
+                                .nickname(nickname)
+                                .authLevel(AuthLevel.ADMIN)
+                                .build();
+                    }else{
+                        member=Member.builder()
+                                .email(email)
+                                .username(username)
+                                .password(password)
+                                .nickname(nickname)
+                                .authLevel(AuthLevel.AUTHOR)
+                                .build();
+                    }
+
         }else{
             //작가 명이 없는 경우
                      member=Member.builder()

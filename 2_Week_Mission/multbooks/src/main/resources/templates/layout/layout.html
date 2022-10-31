@@ -100,7 +100,8 @@
             </a>
         </div>
         <div   id="btw_logo_nav_end" class="w-full">
-            <ul sec:authorize="isAuthenticated()" class="flex" >
+            <ul sec:authorize="isAuthenticated()" class="flex gap-4" >
+
                 <li style="padding: 10px 20px;"><a onclick="" th:href="@{/post/write}" style="color:#000">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -136,6 +137,14 @@
         </div>
         <div class="hidden w-full md:block md:w-auto" id="nav_end">
             <ul class="flex flex-col p-4 mt-4 bg-gray-50 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 whitespace-nowrap">
+                <li>
+                    <a href="/adm/home/main" class="inline-flex" sec:authorize="hasAuthority('ADMIN')">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span class="ml-[2px] hidden sm:block">
+                            관리자 홈
+                         </span>
+                    </a>
+                </li>
                 <li>
                     <a  sec:authorize="isAnonymous()" th:href="@{/member/login}"  class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">로그인</a>
                 </li>
