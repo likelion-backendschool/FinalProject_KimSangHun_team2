@@ -27,7 +27,6 @@ public class OrderItem extends BaseEntity {
     private int pgFee;//결제대행사 수수료
     private int refundPrice;//환불금액
     private boolean isPaid;//결제여부
-    private int quantity;//상품개수
     private int payPrice;
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
@@ -35,7 +34,7 @@ public class OrderItem extends BaseEntity {
     private Product product;
 
     public int calculatePayPrice(){
-        return salePrice*quantity;
+        return salePrice;
     }
 
     public void refund() {
@@ -43,7 +42,7 @@ public class OrderItem extends BaseEntity {
     }
 
     public void paymentDone() {
-        this.pgFee = 0;
+        this.pgFee = (int)Math.round(salePrice*0.1);
         this.payPrice = getSalePrice();
         this.isPaid = true;
         this.payDate = LocalDateTime.now();
@@ -52,4 +51,5 @@ public class OrderItem extends BaseEntity {
     public void updateOrder(Order order) {
         this.order=order;
     }
+
 }

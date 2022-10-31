@@ -16,6 +16,7 @@ public class OrderDetail {
     private String buyer;
     private String name;
     private int payPrice;
+    private String readyStatus;
     List<OrderItemDto> orderItems=new ArrayList<>();
 
 }

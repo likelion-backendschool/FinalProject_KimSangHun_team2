@@ -12,6 +12,7 @@ import com.ebook.multbooks.app.post.exception.AuthorCanNotRemoveException;
 import com.ebook.multbooks.app.post.service.PostService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.global.mapper.PostMapper;
+import com.ebook.multbooks.global.rq.Rq;
 import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,8 @@ public class PostController {
     private final MemberService memberService;
 
     private final PostMapper postMapper;
+    
+    private final Rq rq;
 
     /**
      * 글 작성 폼으로 이동
@@ -80,10 +83,13 @@ public class PostController {
      * 글 상세 보기
      * */
     @ GetMapping("/{id}")
-    public String postDetail(@PathVariable Long id,Model model){
+    public String postDetail(@PathVariable Long id,Model model ,String errorMsg){
             Post post=postService.getPostById(id);
             PostDetailDto postDetailDto=postService.getPostDetailDtoById(id);
             model.addAttribute("postDetail",postDetailDto);
+
+            //에러 메세지가 오는 경우
+            model.addAttribute("errorMsg",errorMsg);
             return "/post/detail";
     }
 
@@ -109,7 +115,14 @@ public class PostController {
      * */
     @GetMapping("/{id}/modify")
     public String postModifyForm(@PathVariable Long id,Model model){
-        PostModifyForm postModifyForm=postService.getPostModifyFormById(id);
+        Post post=postService.getPostById(id);
+        Member actor=rq.getMember();
+        PostModifyForm postModifyForm=null;
+        try{
+            postModifyForm=postService.getPostModifyFormByPost(actor,post);
+        }catch (RuntimeException exception){
+            return "redirect:/post/"+post.getId()+"/?errorMsg="+Util.url.encode(exception.getMessage());
+        }
         model.addAttribute("form",postModifyForm);
         return "post/modifyForm";
     }

@@ -18,37 +18,60 @@ import java.util.List;
 public class CartService {
     private final CartItemRepository cartItemRepository;
     private final CartMapper cartMapper;
-
+    /**
+     *
+     * 장바구니에 상품 추가
+     *
+     * */
     @Transactional
-    public CartItem addItem(Member member, Product product,int quantity){
+    public CartItem addItem(Member member, Product product){
+        //이미 장바구니에 상품있는지 확인하기위한 변수
         CartItem oldCartItem =getItemByMemberAndProduct(member,product);
 
         if(oldCartItem!=null){
-            oldCartItem.addQuantity(quantity);
             return oldCartItem;
         }
 
         CartItem cartItem=CartItem.builder()
                 .member(member)
                 .product(product)
-                .quantity(quantity)
                 .build();
 
         cartItemRepository.save(cartItem);
         return cartItem;
     }
+    /**
+     *
+     * 장바구니에 상품 제거
+     *
+     * */
     @Transactional
     public void removeItem(CartItem cartItem){
         cartItemRepository.delete(cartItem);
     }
+    /**
+     *
+     * 회원의 장바구니 상품 가져오기
+     *
+     * */
     public List<CartItem> getCartItemsByMember(Member member) {
        return cartItemRepository.findAllByMember(member);
     }
+    /**
+     *
+     * 리스트 출력용 장바구니 상품 가져오기
+     *
+     * */
     public List<CartListDto> getCartListDtosByMember(Member member) {
         List<CartItem>cartItems=getCartItemsByMember(member);
         return cartMapper.cartItemsToCartListDtos(cartItems);
     }
 
+    /**
+     *
+     * member와 product로 장바구니 상품 가져오기
+     *
+     * */
     public CartItem getItemByMemberAndProduct(Member member, Product product) {
     return cartItemRepository.findByMemberAndProduct(member,product).orElse(null);
     }

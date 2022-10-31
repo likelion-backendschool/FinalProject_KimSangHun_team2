@@ -13,7 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CashService {
     private final CashLogRepository cashLogRepository;
-
+    /**
+     *
+     * 충전 혹은 결제 내역 추가
+     *
+     * */
     public CashLog addCash(Member member,long price,EventType eventType){
         CashLog cashLog=CashLog.builder()
                 .member(member)

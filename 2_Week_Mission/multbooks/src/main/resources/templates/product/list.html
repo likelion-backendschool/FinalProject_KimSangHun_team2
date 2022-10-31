@@ -2,7 +2,7 @@
 <html  layout:decorate="~{layout/layout.html}" >
 <head>
     <meta charset="UTF-8">
-    <title>상품 리스트</title>
+    <title>도서 리스트</title>
 </head>
 <body>
 <main layout:fragment="main">
@@ -30,7 +30,7 @@
                         </div>
                     </h2>
                     <!--가격 -->
-                    <div th:text="|$:${product.price}|"></div>
+                    <div th:text="|$:${product.salePrice}|"></div>
 
                     <!--날짜-->
                     <div class="flex justify-end">

@@ -31,11 +31,9 @@ public class CartItemServiceTest {
     public void t1(){
         Member member=memberRepository.findByUsername("user1").get();
         Product product=productRepository.findBySubject("도서1"). get();
-        CartItem cartItem =cartService.addItem(member,product,3);
-        assertThat(cartItem.getQuantity()).isEqualTo(5);
+        CartItem cartItem =cartService.addItem(member,product);
 
         //cartItem 에 같은 item 추가
-        CartItem addCartItem =cartService.addItem(member,product,3);
-        assertThat(addCartItem.getQuantity()).isEqualTo(8);
+        CartItem addCartItem =cartService.addItem(member,product);
     }
 }

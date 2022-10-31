@@ -14,7 +14,7 @@ public class ProductForm {
     @NotBlank
     private String subject;
     @NotNull
-    private int price;
+    private int salePrice;
     @NotNull
     private Long postKeywordId;
 }

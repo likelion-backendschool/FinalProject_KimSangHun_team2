@@ -1,6 +1,7 @@
 package com.ebook.multbooks.post;
 
 import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.app.member.repository.MemberRepository;
 import com.ebook.multbooks.app.post.dto.PostDetailDto;
 import com.ebook.multbooks.app.post.dto.PostModifyForm;
 import com.ebook.multbooks.app.post.dto.PostWriteForm;
@@ -34,6 +35,9 @@ public class PostServiceTest {
     @Autowired
     private PostHashTagService postHashTagService;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @Test
     @DisplayName("글 리스트 조회 테스트")
     public void t1(){
@@ -56,8 +60,9 @@ public class PostServiceTest {
     @Test
     @DisplayName("글 수정 폼 이동 테스트")
     public void t4(){
+        Member actor=memberRepository.findByUsername("user1").get();
         Post post=postService.writePost("user1",new PostWriteForm("제목1","내용1","내용1","#테스트 #입니다"));
-        PostModifyForm postModifyForm =postService.getPostModifyFormById(post.getId());
+        PostModifyForm postModifyForm =postService.getPostModifyFormByPost(actor,post);
         assertThat(postModifyForm.getHashtag()).isEqualTo("#테스트 #입니다");
     }
     @Test

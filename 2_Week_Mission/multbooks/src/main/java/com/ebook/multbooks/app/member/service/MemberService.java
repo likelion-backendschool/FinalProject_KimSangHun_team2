@@ -87,7 +87,7 @@ public class MemberService {
         //예치금 업데이트
         member.updateRestCash(newRestCash);
 
-        //테스트 데이터에서 member 가 영속성 컨텟스트에 저장 안되어있는경우를 위해  추가
+
         memberRepository.save(member);
 
         return newRestCash;

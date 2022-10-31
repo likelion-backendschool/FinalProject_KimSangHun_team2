@@ -72,8 +72,10 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    public PostModifyForm getPostModifyFormById(Long id) {
-        Post post=getPostById(id);
+    public PostModifyForm getPostModifyFormByPost(Member actor,Post post) {
+        if(actor.getId()!=post.getId()){
+            throw new RuntimeException("글 수정할 권한이 없습니다!");
+        }
         List<PostKeyword>postKeywords=postHashTagService.getPostKeywords(post);
         PostModifyForm postModifyForm= postMapper.postToPostModifyForm(post);
         String hashTag= postKeywords.stream().map(postKeyword -> "#"+postKeyword.getContent()).collect(Collectors.joining(" "));

@@ -9,8 +9,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CartMapper {
-    @Mapping(target = "price",source = "product.price")
+    @Mapping(target = "salePrice",source = "product.salePrice")
     @Mapping(target = "productSubject",source = "product.subject")
+    @Mapping(target = "productId",source = "product.id")
     CartListDto cartItemToCartListDto(CartItem cartItem);
     List<CartListDto>cartItemsToCartListDtos(List<CartItem> cartItems);
 }

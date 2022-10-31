@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class ProductListDto {
     private long id;
     private String subject;
-    private int price;
+    private int salePrice;
     private String author;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;

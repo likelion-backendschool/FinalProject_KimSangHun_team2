@@ -1,12 +1,20 @@
 package com.ebook.multbooks.order;
 
+import com.ebook.multbooks.app.cash.event.EventType;
+import com.ebook.multbooks.app.cash.repository.CashLogRepository;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
+import com.ebook.multbooks.app.mybook.repository.MyBookRepository;
 import com.ebook.multbooks.app.order.entity.Order;
+import com.ebook.multbooks.app.order.entity.readystatus.ReadyStatus;
 import com.ebook.multbooks.app.order.repository.OrderRepository;
 import com.ebook.multbooks.app.order.service.OrderService;
+import com.ebook.multbooks.app.order.service.PayService;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.orderItem.repository.OrderItemRepository;
+import com.ebook.multbooks.app.product.entity.Product;
+import com.ebook.multbooks.app.product.repository.ProductRepository;
+import com.ebook.multbooks.app.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +27,14 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
 @ActiveProfiles({"test","secret"})
 public class OrderServiceTest {
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private PayService payService;
+
 
     @Autowired
     private MemberRepository memberRepository;
@@ -34,32 +45,94 @@ public class OrderServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private CashLogRepository cashLogRepository;
+
+    @Autowired
+    private MyBookRepository myBookRepository;
+
     @Test
-    @DisplayName("createFromCart 테스트")
+    @DisplayName("장바구니주문 테스트")
     public void  t1(){
-        Member member=memberRepository.findByUsername("user1").get();
-        Order order=orderService.createFromCart(member);
-        assertThat(orderItemRepository.findAll().size()).isGreaterThanOrEqualTo(2);
+        Member member=memberRepository.findByUsername("user2").get();
+        Order order=orderService.createOrderFromCart(member);
+        assertThat(order.getMember()).isEqualTo(member);
     }
     @Test
-    @DisplayName("payByResCash 테스트")
+    @DisplayName("예치금 결제 테스트")
     public void  t2(){
-        Order order=orderRepository.findByName("카트주문1").orElse(null);
-        orderService.payByRestCash(order);
-        assertThat(order.getPayPrice()).isNotEqualTo(0);
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
+        payService.payByRestCash(order);
+        assertThat(100000-member.getRestCash()).isEqualTo(order.getPayPrice());
     }
 
     @Test
-    @DisplayName("refund 테스트")
+    @DisplayName("환불 테스트")
     public void  t3(){
-        Order order=orderRepository.findByName("카트주문1").orElse(null);
-        orderService.payByRestCash(order);
-        orderService.refund(order);
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
+        payService.payByRestCash(order);
+        payService.refund(order);
         assertThat(order.isRefunded()).isEqualTo(true);
         for(OrderItem orderItem:order.getOrderItems()){
             assertThat(orderItem.getRefundPrice()).isGreaterThanOrEqualTo(0);
         }
         assertThat(order.getMember().getRestCash()).isEqualTo(100000);
+    }
+
+    @Test
+    @DisplayName("즉시 주문")
+    public void createOrder(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Product product=productRepository.findBySubject("도서1").get();
+        Order order=orderService.createOrder(member,product);
+        assertThat(order).isNotEqualTo(null);
+        assertThat(order.getMember()).isEqualTo(member);
+        assertThat(order.getOrderItems().get(0).getProduct()).isEqualTo(product);
+    }
+
+    @Test
+    @DisplayName("주문 취소")
+    public void cancel(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Product product=productRepository.findBySubject("도서1").get();
+        Order order=orderService.createOrder(member,product);
+        //준비상태
+        assertThat(order.getReadyStatus()).isEqualTo(ReadyStatus.READY);
+        orderService.cancelOrder(order.getId());
+        //취소 상태
+        assertThat(order.getReadyStatus()).isEqualTo(ReadyStatus.CANCEL);
+        assertThat(order.isCanceled()).isEqualTo(true);
+    }
+
+    @Test
+    @Rollback(value = false)
+    @DisplayName("토스페이 결제 테스트")
+    public void  tossPay(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
+        payService.payByTossPayments(order,1000);
+        assertThat(cashLogRepository.findByMemberAndEventType(member,EventType.CHARGE_FOR_PAYMENT_TOSS)).isNotNull();
+
+        //my book 관련 테스트 추가
+        assertThat(myBookRepository.findByMember(order.getMember()).size()).isGreaterThanOrEqualTo(1);
+        payService.refund(order);
+        assertThat(myBookRepository.findByMember(order.getMember()).size()).isGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    @Rollback(value = false)
+    @DisplayName("환불 테스트")
+    public void  refund(){
+        Member member=memberRepository.findByUsername("user1").get();
+        Order order=orderRepository.findByMemberAndIsPaidFalse(member).get(0);
+        payService.payByTossPayments(order,1000);
+        payService.refund(order);
+        assertThat(member.getRestCash()).isEqualTo(108000);
+        
     }
 
 }

@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.cart.service.CartService;
 import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.service.ProductService;
 import com.ebook.multbooks.global.rq.Rq;
+import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -27,9 +28,10 @@ public class CartController {
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
-    public String showList(Model model){
+    public String showList(Model model,String msg){
         List<CartListDto>cartListDtos=cartService.getCartListDtosByMember(rq.getMember());
         model.addAttribute("cartItems",cartListDtos);
+        model.addAttribute("msg",msg);
         return "cart/list";
     }
 
@@ -37,8 +39,8 @@ public class CartController {
     @PreAuthorize("isAuthenticated()")
     public String addItem(@PathVariable Long productId){
         Product product = productService.getProductById(productId);
-        cartService.addItem(rq.getMember(),product,1);
-        return "redirect:/cart/list";
+        cartService.addItem(rq.getMember(),product);
+        return "redirect:/product/list/?msg=" + Util.url.encode(product.getSubject()+"을 장바구니에 추가하였습니다.");
     }
 
     @PostMapping("/remove/{productId}")
@@ -47,6 +49,6 @@ public class CartController {
         Product product = productService.getProductById(productId);
         CartItem cartItem=cartService.getItemByMemberAndProduct(rq.getMember(),product);
         cartService.removeItem(cartItem);
-        return "redirect:/cart/list";
+        return "redirect:/cart/list?msg=" + Util.url.encode(product.getSubject()+"을 장바구니에서 제거하였습니다.");
     }
 }

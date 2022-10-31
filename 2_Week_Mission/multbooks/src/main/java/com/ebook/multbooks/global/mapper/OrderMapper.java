@@ -20,7 +20,7 @@ public class OrderMapper {
         orderItems=order.getOrderItems().stream()
                 .map(orderItem ->OrderItemDto.builder()
                         .subject(orderItem.getProduct().getSubject())
-                        .price(orderItem.getProduct().getPrice())
+                        .price(orderItem.getProduct().getSalePrice())
                         .build())
                 .collect(Collectors.toList());
 
@@ -36,6 +36,7 @@ public class OrderMapper {
                 .name(order.getName())
                 .buyer(rq.getMember().getUsername())
                 .payPrice(payPrice)
+                .readyStatus(order.getReadyStatus().getMessage())
                 .build();
         return orderDetail;
     }

@@ -5,9 +5,11 @@ import com.ebook.multbooks.app.order.dto.OrderDetail;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.order.exception.ActorCanNotOrderAccessException;
 import com.ebook.multbooks.app.order.service.OrderService;
+import com.ebook.multbooks.app.order.service.PayService;
 import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.global.mapper.OrderMapper;
 import com.ebook.multbooks.global.rq.Rq;
+import com.ebook.multbooks.global.util.Util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -36,34 +38,37 @@ public class OrderController {
     private final ObjectMapper objectMapper;
 
     private final RestTemplate restTemplate=new RestTemplate();
-
+    private final PayService payService;
     private final String SECRET_KEY="test_sk_N5OWRapdA8d7YZ4Qvvbro1zEqZKL";
 
     /**
      * 주문 생성
+     * 주문생성후 상세페이지로 이동
      * */
     @PostMapping("/create")
     public String create(){
-       Order order= orderService.createFromCart(rq.getMember());
+       Order order= orderService.createOrderFromCart(rq.getMember());
         return "redirect:/order/"+order.getId();
     }
 
     /**
      * 주문 상세
      * 주문 상세페이지는  orderId 로 접근하기 때문에
-     * 예측이 가능해 조건문이 필요
+     * 예측이 가능해  다른계정 접근을 방어하는 예외처리 필요
      * */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id,Model model){
+    public String detail(@PathVariable Long id,Model model,String errorMsg){
         Order order=orderService.getOrderById(id);
         Member actor=rq.getMember();
 
         if(orderService.actorCanAccess(actor,order)==false){
-            throw  new ActorCanNotOrderAccessException();
+            return "redirect:/"+order.getId()+"?msg="+ Util.url.encode("해당 계정의 주문이 아닙니다!");
         }
-        OrderDetail orderDetail=orderMapper.orderToOrderDetail(order);
+
+        OrderDetail orderDetail= orderService.getOrderDetail(order);
         model.addAttribute("order",orderDetail);
+        model.addAttribute("errorMsg",errorMsg);
         return "order/detail";
     }
 
@@ -73,13 +78,11 @@ public class OrderController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(Model model){
-        //결제안된 주문만 가져오기
-        List<Order> orders=orderService.getOrdersByMemberAndisPaidFalse(rq.getMember());
+        List<Order> orders=orderService.getOrdersByMember(rq.getMember());
         List<OrderDetail>orderDetails=orderMapper.ordersToOrderDetails(orders);
         model.addAttribute("orders",orderDetails);
         return "order/list";
     }
-
     /**
      * 주문 취소
      * */
@@ -94,8 +97,15 @@ public class OrderController {
      * */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/refund")
-    public String refund(){
-    return "";
+    public String refund(@PathVariable Long id){
+            Order order=orderService.getOrderById(id);
+            try {
+                payService.refund(order);
+            }catch (RuntimeException exception){
+
+                return "redirect:/?errorMsg="+Util.url.encode(exception.getMessage());
+            }
+    return "redirect:/";
     }
 
     /**
@@ -105,7 +115,11 @@ public class OrderController {
     @PostMapping("/{id}/payCash")
     public String payCash(@PathVariable Long id,Model model){
         Order order=orderService.getOrderById(id);
-        orderService.payByRestCash(order);
+       try{
+           payService.payByRestCash(order);
+       }catch (RuntimeException exception){
+           return "redirect:/order/"+order.getId()+"/?errorMsg="+Util.url.encode(exception.getMessage());
+       }
         model.addAttribute("orderId",order.getName());
         return "order/success";
     }
@@ -116,7 +130,7 @@ public class OrderController {
     @GetMapping("/{id}/pay")
     public String payCard(
             @RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount,@PathVariable Long id,
-            Model model) throws Exception {
+            @RequestParam(defaultValue = "0") int useCash,Model model) throws Exception {
 
         HttpHeaders headers = new HttpHeaders();
         // headers.setBasicAuth(SECRET_KEY, ""); // spring framework 5.2 이상 버전에서 지원
@@ -135,7 +149,11 @@ public class OrderController {
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
 
             Order order=orderService.getOrderById(id);
-            orderService.payByTossPayments(order);
+            try{
+                payService.payByTossPayments(order,useCash);
+            }catch (RuntimeException exception){
+                return "redirect:/order/"+order.getId()+"/?errorMsg="+Util.url.encode(exception.getMessage());
+            }
 
             JsonNode successNode = responseEntity.getBody();
             model.addAttribute("orderId", successNode.get("orderId").asText());

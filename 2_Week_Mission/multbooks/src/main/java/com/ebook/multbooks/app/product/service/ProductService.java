@@ -8,6 +8,7 @@ import com.ebook.multbooks.app.product.dto.ProductDetailDto;
 import com.ebook.multbooks.app.product.dto.ProductListDto;
 import com.ebook.multbooks.app.product.dto.ProductModifyForm;
 import com.ebook.multbooks.app.product.entity.Product;
+import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.app.product.exception.ProductNotFoundException;
 import com.ebook.multbooks.app.product.repository.ProductRepository;
 import com.ebook.multbooks.global.mapper.ProductMapper;
@@ -25,13 +26,20 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     private final ProductMapper productMapper;
-    public Product createProduct(Member author, String subject, int price, Long postKeywordId) {
+    /**
+     *
+     * wholesalePrice 를 매개변수로받고
+     * price,salePrice=>4배,3배 로 가격 설정
+     * */
+    public Product createProduct(Member author, String subject, int wholesalePrice, Long postKeywordId) {
         PostKeyword postKeyword=postKeywordService.getKeywordById(postKeywordId);
         Product product=Product.builder()
                 .author(author)
                 .subject(subject)
                 .postKeyword(postKeyword)
-                .price(price)
+                .price(wholesalePrice*4)
+                .wholesalePrice(wholesalePrice)
+                .salePrice(wholesalePrice*3)
                 .build();
         productRepository.save(product);
         return product;
@@ -51,15 +59,17 @@ public class ProductService {
         return productMapper.productsToProductListDtos(products);
     }
 
-    public ProductModifyForm getProductModifyFormByProductId(Long productId) {
-        Product product=getProductById(productId);
+    public ProductModifyForm getProductModifyFormByProduct(Member actor,Product product) {
+        if(actorCanModify(actor,product)==false){
+            throw  new RuntimeException("도서 수정 권한이 없습니다!");
+        }
         return productMapper.productToProductModifyForm(product);
     }
     @Transactional
     public Product modifyProduct(Long productId, ProductModifyForm productModifyForm) {
         Product product=getProductById(productId);
         String subject=productModifyForm.getSubject();
-        int price=productModifyForm.getPrice();
+        int price=productModifyForm.getSalePrice();
         product.update(subject,price);
         return product;
     }

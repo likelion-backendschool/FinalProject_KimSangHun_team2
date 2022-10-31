@@ -11,6 +11,7 @@ import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.app.product.service.ProductService;
 import com.ebook.multbooks.global.rq.Rq;
+import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -44,22 +45,24 @@ public class ProductController {
             return "redirect:/product/create";
         }
         Member author=rq.getMember();
-        Product product=productService.createProduct(author,productForm.getSubject(),productForm.getPrice(),productForm.getPostKeywordId());
+        Product product=productService.createProduct(author,productForm.getSubject(),productForm.getSalePrice(),productForm.getPostKeywordId());
         return "redirect:/product/"+product.getId();
     }
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id,Model model){
+    public String detail(@PathVariable Long id,Model model,String errorMsg){
         Product product=productService.getProductById(id);
         ProductDetailDto productDetailDto=productService.productToProductDetailDto(product);
+        model.addAttribute("errorMsg",errorMsg);
         model.addAttribute("productDetail",productDetailDto);
         return "product/detail";
     }
 
     @GetMapping("/list")
-    public String list(Model model){
+    public String list(Model model,String msg){
         List<ProductListDto>productListDtos= productService.getAllProductListDtosOrderByUpdateDate();
         model.addAttribute("productList",productListDtos);
+        model.addAttribute("msg",msg);
         return "product/list";
     }
     @PreAuthorize("isAuthenticated()")
@@ -67,11 +70,12 @@ public class ProductController {
     public String modifyForm(@PathVariable Long id,Model model){
         Product product =productService.getProductById(id);
         Member actor=rq.getMember();
-
-        if(productService.actorCanModify(actor,product)==false){
-            throw  new ActorCanNotModifyException();
-        }
-        ProductModifyForm productModifyForm=productService.getProductModifyFormByProductId(id);
+        ProductModifyForm productModifyForm=null;
+       try{
+           productModifyForm=productService.getProductModifyFormByProduct(actor,product);
+       }catch (RuntimeException exception){
+           return "redirect:/product/"+product.getId()+"/?errorMsg="+ Util.url.encode(exception.getMessage());
+       }
         model.addAttribute("form",productModifyForm);
         return "product/modifyForm";
     }
