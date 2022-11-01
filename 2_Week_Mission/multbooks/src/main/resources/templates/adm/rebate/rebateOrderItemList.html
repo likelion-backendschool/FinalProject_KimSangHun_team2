@@ -14,6 +14,9 @@
                 <table class="table table-compact w-full">
                     <thead>
                     <tr>
+                        <th>
+                            <input type="checkbox" class="orderItemCheckboxAll checkbox">
+                        </th>
                         <th>품목번호</th>
                         <th>결제날짜</th>
                         <th>상품명</th>
@@ -29,6 +32,9 @@
 
                     <tbody>
                     <tr th:each="item : ${items}" class="text-center">
+                        <td>
+                            <input th:if="${item.rebateAvailable}" th:value="${item.orderItem.id}" onchange=" OrderItemCheckbox__changed();" type="checkbox" class="orderItemCheckbox checkbox" >
+                        </td>
                         <td th:text="${item.orderItem.id}"></td>
                         <td th:text="${item.payDate}"></td>
                         <td th:text="${item.productSubject}"></td>
@@ -40,13 +46,55 @@
                         <td th:text="${item.rebateCashLog?.id}"></td>
                         <td>
                             <a th:if="${item.rebateAvailable}" href="javascript:;" onclick="$(this).next().submit();" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-3 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">건별정산</a>
-                            <form method="POST" th:action="@{|/adm/rebate/rebateOne/${item.orderItem.id}|}" target="_blank" hidden>
+                            <form method="POST" th:action="@{|/adm/rebate/rebateOne/${item.orderItem.id}|}" hidden>
 
                             </form>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <a href="javascript:;" onclick="RebateForm__submit();" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-3 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">선택정산</a>
+                <form method="POST" name="rebateForm" th:action="@{/adm/rebate/rebate}" hidden>
+                    <input type="hidden" name="ids">
+                </form>
+                <script>
+                       // 전체선택 체크박스
+                    const $orderItemCheckboxAll = $('.orderItemCheckboxAll');
+                    // 아이템 체크박스
+                    const $orderItemCheckbox = $('.orderItemCheckbox');
+
+                    //모두 선택기능
+                    $orderItemCheckboxAll.change(function () {
+                        const allChecked = $(this).prop('checked');
+                        $orderItemCheckbox.prop('checked', allChecked); // 아이템 체크박스들에게 체크상태 동기화
+                    });
+                        //선택시 모두 선택되면 전체선택을 선택
+                        function OrderItemCheckbox__changed() {
+                        const allChecked = $orderItemCheckbox.length == $('.orderItemCheckbox:checked').length;
+
+                        $orderItemCheckboxAll.prop('checked', allChecked);
+                    }
+
+                    let RebateForm__submitDone=false;
+
+                    function RebateForm__submit() {
+                        if (RebateForm__submitDone) return;
+
+                        const form = document.rebateForm;
+
+                        const $checked = $('.orderItemCheckbox:checked');
+
+                        if ($checked.length == 0) {
+                            alert('정산할 주문품목을 선택해주세요.');
+                            return;
+                        }
+
+                        const ids = $checked.map((index, el) => $(el).val()).get();
+                        form.ids.value = ids;
+                        form.submit();
+                        RebateForm__submitDone = true;
+                    }
+                </script>
             </div>
         </div>
     </div>
