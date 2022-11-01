@@ -50,6 +50,8 @@ public class RebateOrderItem extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CashLog rebateCashLog; // 정산에 관련된 환급지급내역
 
+    private LocalDateTime rebateDate;
+
     // 구매자회원
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -98,4 +100,8 @@ public class RebateOrderItem extends BaseEntity {
         return true;
     }
 
+    public void setRebateDone(CashLog cashLog) {
+        rebateDate=LocalDateTime.now();
+        rebateCashLog=cashLog;
+    }
 }

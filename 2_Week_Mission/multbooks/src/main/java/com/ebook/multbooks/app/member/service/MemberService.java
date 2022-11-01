@@ -104,4 +104,19 @@ public class MemberService {
 
         return newRestCash;
     }
+
+    public CashLog addCashAndReturnCashLog(Member member, int calculateRebatePrice, EventType eventType) {
+        //예치금 로그 남기기
+        CashLog cashLog=cashService.addCash(member,calculateRebatePrice,eventType);
+        //현재 + 충전 예치금 계산
+        long newRestCash=member.getRestCash()+cashLog.getPrice();
+
+        //예치금 업데이트
+        member.updateRestCash(newRestCash);
+
+
+        memberRepository.save(member);
+
+        return cashLog;
+    }
 }

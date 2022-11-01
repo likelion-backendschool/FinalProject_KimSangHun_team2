@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,5 +42,9 @@ public class OrderItemService {
 
     public List<OrderItem> findAllByPayDateBetween(LocalDateTime fromDate, LocalDateTime toDate) {
         return orderItemRepository.findAllByPayDateBetween(fromDate,toDate);
+    }
+
+    public OrderItem findByOrderItemId(long orderItemId) {
+        return orderItemRepository.findById(orderItemId).orElseThrow(()->new EntityNotFoundException("해당 주문 품목을 찾을수 없습니다."));
     }
 }

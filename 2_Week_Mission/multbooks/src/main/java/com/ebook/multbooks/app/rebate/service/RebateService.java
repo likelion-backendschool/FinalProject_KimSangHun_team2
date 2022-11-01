@@ -1,5 +1,8 @@
 package com.ebook.multbooks.app.rebate.service;
 
+import com.ebook.multbooks.app.cash.entity.CashLog;
+import com.ebook.multbooks.app.cash.event.EventType;
+import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.order.service.OrderService;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.orderItem.service.OrderItemService;
@@ -8,7 +11,9 @@ import com.ebook.multbooks.app.rebate.repository.RebateOrderItemRepository;
 import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +23,8 @@ import java.util.stream.Collectors;
 public class RebateService {
     private final OrderItemService orderItemService;
     private final RebateOrderItemRepository rebateOrderItemRepository;
+    private final MemberService memberService;
+
     /*
     *
     * 지정한 달 -1  15일~지정한달 15일 까지의
@@ -57,4 +64,17 @@ public class RebateService {
         LocalDateTime toDate=Util.date.parse(toDateStr);
         return rebateOrderItemRepository.findAllByPayDateBetweenOrderByIdAsc(fromDate,toDate);
     }
+    @Transactional
+    public  void rebate(long orderItemId){
+        OrderItem orderItem=orderItemService.findByOrderItemId(orderItemId);
+        RebateOrderItem rebateOrderItem=rebateOrderItemRepository.findByOrderItem(orderItem).orElseThrow(()->new EntityNotFoundException("해당 주문 상품이 없습니다."));
+        //정산금액
+        int calculateRebatePrice=rebateOrderItem.calculateRebatePrice();
+        //정산금액 만큼 판매자에게 돌려주고 로그 남기기
+        CashLog cashLog =memberService.addCashAndReturnCashLog(rebateOrderItem.getSeller(),calculateRebatePrice, EventType.SALES_RECEIVE);
+        //정산상품 속성값 변경
+        rebateOrderItem.setRebateDone(cashLog);
+
+    }
+
 }
