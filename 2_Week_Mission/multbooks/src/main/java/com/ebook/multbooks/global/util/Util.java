@@ -4,9 +4,34 @@ import com.ebook.multbooks.app.member.entity.Member;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 public class Util {
+    public static class date{
+        /*
+        * 이전 달 년월을 반환하는 메서드
+        * 1월인 경우만 12월로 가는 예외상황이 있다.
+        * */
+        public static String getBeforeYearMonth(String yearMonth) {
+           String[] str= yearMonth.split("-");
+           int year=Integer.parseInt(str[0]);
+           int month=Integer.parseInt(str[1]);
+           if(month==1){
+               year=year-1;
+               month=12;
+           }else{
+               month=month-1;
+           }
+           return "%d".formatted(year)+"-"+"%02d".formatted(month);
+        }
+        //문자열->LocalDateTime으로 변경
+        public static LocalDateTime parse(String fromDateStr) {
+            return LocalDateTime.parse(fromDateStr,DateTimeFormatter.ofPattern(("yyyy-MM-dd HH:mm:ss.SSSSSS")));
+        }
+    }
+
     public  static class url{
 
         /**
