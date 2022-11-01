@@ -50,9 +50,12 @@ public class RebateService {
             //orderItem 의 복사본이기 때문에 orderItemId를 기준으로 중복되면 안됨->삭제후 생성
             RebateOrderItem oldRebateOrderItem=rebateOrderItemRepository.findByOrderItem(rebateOrderItem.getOrderItem()).orElse(null);
             if(oldRebateOrderItem!=null){
-                rebateOrderItemRepository.delete(oldRebateOrderItem);
+                // rebateOrderItemRepository.delete 하면 정산처리한 내역도 날라가서 정산 내역 빼고 update 하도록 수정
+                oldRebateOrderItem.update(rebateOrderItem);
+                rebateOrderItemRepository.save(oldRebateOrderItem);
+            }else{
+                rebateOrderItemRepository.save(rebateOrderItem);
             }
-            rebateOrderItemRepository.save(rebateOrderItem);
         });
 
     }
@@ -68,6 +71,9 @@ public class RebateService {
     public  void rebate(long orderItemId){
         OrderItem orderItem=orderItemService.findByOrderItemId(orderItemId);
         RebateOrderItem rebateOrderItem=rebateOrderItemRepository.findByOrderItem(orderItem).orElseThrow(()->new EntityNotFoundException("해당 주문 상품이 없습니다."));
+        if (rebateOrderItem.isRebateAvailable() == false) {
+            throw new RuntimeException("정산은 주문 품목당 한번만 가능합니다!");
+        }
         //정산금액
         int calculateRebatePrice=rebateOrderItem.calculateRebatePrice();
         //정산금액 만큼 판매자에게 돌려주고 로그 남기기

@@ -94,7 +94,7 @@ public class RebateOrderItem extends BaseEntity {
         return payPrice-pgFee-wholesalePrice;
     }
     public boolean isRebateAvailable(){
-        if(refundPrice>0){
+        if(refundPrice>0||rebateDate!=null){
             return false;
         }
         return true;
@@ -103,5 +103,28 @@ public class RebateOrderItem extends BaseEntity {
     public void setRebateDone(CashLog cashLog) {
         rebateDate=LocalDateTime.now();
         rebateCashLog=cashLog;
+    }
+
+    public void update(RebateOrderItem rebateOrderItem) {
+        this.orderItem=orderItem;
+        order=orderItem.getOrder();
+        product=orderItem.getProduct();
+        price = orderItem.getPrice();
+        salePrice = orderItem.getSalePrice();
+        wholesalePrice = orderItem.getWholesalePrice();
+        pgFee = orderItem.getPgFee();
+        payPrice = orderItem.getPayPrice();
+        refundPrice = orderItem.getRefundPrice();
+        isPaid = orderItem.isPaid();
+        payDate = orderItem.getPayDate();
+
+        productSubject=orderItem.getProduct().getSubject();
+
+        orderItemCreateDate=orderItem.getCreateDate();
+
+        buyer=orderItem.getOrder().getMember();
+        buyerName=orderItem.getOrder().getMember().getUsername();
+        seller=orderItem.getProduct().getAuthor();
+        sellerName=orderItem.getProduct().getAuthor().getUsername();
     }
 }

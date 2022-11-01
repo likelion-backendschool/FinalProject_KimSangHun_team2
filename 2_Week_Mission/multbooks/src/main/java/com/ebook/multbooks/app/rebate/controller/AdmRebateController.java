@@ -21,7 +21,9 @@ public class AdmRebateController {
     private final RebateService rebateService;
     @GetMapping("/makeData")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String showMakeData() {
+    public String showMakeData(String msg,Model model) {
+
+        model.addAttribute("msg",msg);
         return "adm/rebate/makeData";
     }
 
@@ -35,9 +37,10 @@ public class AdmRebateController {
     }
     @GetMapping("/rebateOrderItemList")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String showRebateOrderItemList(String yearMonth, Model model){
+    public String showRebateOrderItemList(String yearMonth, String msg,Model model){
         List<RebateOrderItem> items=rebateService.findRebateOrderItemsByPayDateInOrderByIdAsc(yearMonth);
         model.addAttribute("items",items);
+        model.addAttribute("msg",msg);
         return "adm/rebate/rebateOrderItemList";
     }
 
@@ -46,7 +49,7 @@ public class AdmRebateController {
     public String rebateOne(@PathVariable long orderItemId) {
        try{
            rebateService.rebate(orderItemId);
-       }catch (EntityNotFoundException exception){
+       }catch (Exception exception){
            return "redirect:/adm/rebate/makeData?msg="+Util.url.encode(exception.getMessage());
        }
         return "redirect:/adm/rebate/makeData?msg="+Util.url.encode("정산 성공");
