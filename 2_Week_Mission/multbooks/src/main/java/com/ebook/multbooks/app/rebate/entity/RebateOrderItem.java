@@ -1,6 +1,8 @@
 package com.ebook.multbooks.app.rebate.entity;
 
 import com.ebook.multbooks.app.base.entity.BaseEntity;
+import com.ebook.multbooks.app.cash.entity.CashLog;
+import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
 import com.ebook.multbooks.app.product.entity.Product;
@@ -44,6 +46,17 @@ public class RebateOrderItem extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Product product;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private CashLog rebateCashLog; // 정산에 관련된 환급지급내역
+
+    // 회원
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Member buyer;
+
+    private String buyerName;
+
     public RebateOrderItem (OrderItem orderItem){
         this.orderItem=orderItem;
         order=orderItem.getOrder();
@@ -60,6 +73,9 @@ public class RebateOrderItem extends BaseEntity {
         productSubject=orderItem.getProduct().getSubject();
 
         orderItemCreateDate=orderItem.getCreateDate();
+
+        buyer=orderItem.getOrder().getMember();
+        buyerName=orderItem.getOrder().getMember().getUsername();
     }
 
 }
