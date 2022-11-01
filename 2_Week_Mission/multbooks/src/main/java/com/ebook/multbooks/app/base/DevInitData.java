@@ -62,9 +62,11 @@ public class DevInitData {
            Order order1=orderService.createOrderFromCart(member1);
            Order order2=orderService.createOrderFromCart(member2);
 
-           // 주문을 결제
+           // 주문1,2 결제
            payService.payByRestCash(order1);
            payService.payByRestCash(order2);
+           //주문1 환불
+           payService.refund(order2);
        };
     }
 }

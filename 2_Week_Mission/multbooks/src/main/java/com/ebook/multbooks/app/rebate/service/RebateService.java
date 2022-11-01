@@ -49,4 +49,12 @@ public class RebateService {
         });
 
     }
+
+    public List<RebateOrderItem> findRebateOrderItemsByPayDateInOrderByIdAsc(String yearMonth) {
+        String fromDateStr= Util.date.getBeforeYearMonth(yearMonth)+"-15 00:00:00.000000";
+        String toDateStr=yearMonth+"-15 23:59:59.999999";
+        LocalDateTime fromDate=Util.date.parse(fromDateStr);
+        LocalDateTime toDate=Util.date.parse(toDateStr);
+        return rebateOrderItemRepository.findAllByPayDateBetweenOrderByIdAsc(fromDate,toDate);
+    }
 }

@@ -50,12 +50,18 @@ public class RebateOrderItem extends BaseEntity {
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private CashLog rebateCashLog; // 정산에 관련된 환급지급내역
 
-    // 회원
+    // 구매자회원
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member buyer;
-
     private String buyerName;
+
+    // .판매자자회원
+   @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Member seller;
+    private String sellerName;
+
 
     public RebateOrderItem (OrderItem orderItem){
         this.orderItem=orderItem;
@@ -76,6 +82,20 @@ public class RebateOrderItem extends BaseEntity {
 
         buyer=orderItem.getOrder().getMember();
         buyerName=orderItem.getOrder().getMember().getUsername();
+        seller=orderItem.getProduct().getAuthor();
+        sellerName=orderItem.getProduct().getAuthor().getUsername();
+    }
+    public int calculateRebatePrice(){
+        if(isRebateAvailable()==false){
+            return 0;
+        }
+        return payPrice-pgFee-wholesalePrice;
+    }
+    public boolean isRebateAvailable(){
+        if(refundPrice>0){
+            return false;
+        }
+        return true;
     }
 
 }
