@@ -46,6 +46,28 @@ public class Util {
                 return str;
             }
         }
+        /*
+        * url 에서 paramValue 찾는 메서드
+        * */
+        public static String getQueryParamValue(String url, String paramName, String defaultValue) {
+            String[] urlBits = url.split("\\?", 2);
+
+            if (urlBits.length == 1) {
+                return defaultValue;
+            }
+
+            urlBits = urlBits[1].split("&");
+
+            String param = Arrays.stream(urlBits)
+                    .filter(s -> s.startsWith(paramName + "="))
+                    .findAny()
+                    .orElse(paramName + "=" + defaultValue);
+
+            String value = param.split("=", 2)[1].trim();
+
+            return value.length() > 0 ? value : defaultValue;
+        }
+
     }
     public static class str{
         public static String[] makeKeywords(String str){

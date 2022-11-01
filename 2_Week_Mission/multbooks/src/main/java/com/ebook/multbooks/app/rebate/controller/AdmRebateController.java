@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,12 +47,16 @@ public class AdmRebateController {
 
     @PostMapping("/rebateOne/{orderItemId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String rebateOne(@PathVariable long orderItemId) {
+    public String rebateOne(@PathVariable long orderItemId, HttpServletRequest req) {
        try{
            rebateService.rebate(orderItemId);
        }catch (Exception exception){
            return "redirect:/adm/rebate/makeData?msg="+Util.url.encode(exception.getMessage());
        }
-        return "redirect:/adm/rebate/makeData?msg="+Util.url.encode("정산 성공");
+       String refer=req.getHeader("Referer");
+       String yearMonth=Util.url.getQueryParamValue(refer,"yearMonth","");
+       String redirect="redirect:/adm/rebate/rebateOrderItemList?yearMonth="+yearMonth;
+
+        return redirect+"&msg="+Util.url.encode("정산 성공");
     }
 }
