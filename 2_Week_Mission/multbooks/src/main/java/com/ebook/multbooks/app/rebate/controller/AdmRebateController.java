@@ -48,8 +48,9 @@ public class AdmRebateController {
     @PostMapping("/rebateOne/{orderItemId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String rebateOne(@PathVariable long orderItemId, HttpServletRequest req) {
+        String resultMsg=null;
        try{
-           rebateService.rebate(orderItemId);
+           resultMsg=rebateService.rebate(orderItemId);
        }catch (Exception exception){
            return "redirect:/adm/rebate/makeData?msg="+Util.url.encode(exception.getMessage());
        }
@@ -57,6 +58,6 @@ public class AdmRebateController {
        String yearMonth=Util.url.getQueryParamValue(refer,"yearMonth","");
        String redirect="redirect:/adm/rebate/rebateOrderItemList?yearMonth="+yearMonth;
 
-        return redirect+"&msg="+Util.url.encode("정산 성공");
+        return redirect+"&msg="+Util.url.encode(resultMsg);
     }
 }

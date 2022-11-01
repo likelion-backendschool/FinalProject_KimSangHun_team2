@@ -67,8 +67,12 @@ public class RebateService {
         LocalDateTime toDate=Util.date.parse(toDateStr);
         return rebateOrderItemRepository.findAllByPayDateBetweenOrderByIdAsc(fromDate,toDate);
     }
+
+    /*
+    * 정산후 완료 메세지를 보내는 메소드
+    * */
     @Transactional
-    public  void rebate(long orderItemId){
+    public  String rebate(long orderItemId){
         OrderItem orderItem=orderItemService.findByOrderItemId(orderItemId);
         RebateOrderItem rebateOrderItem=rebateOrderItemRepository.findByOrderItem(orderItem).orElseThrow(()->new EntityNotFoundException("해당 주문 상품이 없습니다."));
         if (rebateOrderItem.isRebateAvailable() == false) {
@@ -80,7 +84,7 @@ public class RebateService {
         CashLog cashLog =memberService.addCashAndReturnCashLog(rebateOrderItem.getSeller(),calculateRebatePrice, EventType.SALES_RECEIVE);
         //정산상품 속성값 변경
         rebateOrderItem.setRebateDone(cashLog);
-
+    return "주문품목번호 %d번에 대해서 판매자에게 %s원 정산을 완료하였습니다.".formatted(orderItem.getId(), calculateRebatePrice);
     }
 
 }
