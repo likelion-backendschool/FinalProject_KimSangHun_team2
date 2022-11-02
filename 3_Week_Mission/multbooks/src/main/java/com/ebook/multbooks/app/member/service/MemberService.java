@@ -30,13 +30,25 @@ public class MemberService {
         Member member;
         //작가 명이 있는경우
         if(!nickname.equals("")){
-                    member=Member.builder()
-                    .email(email)
-                    .username(username)
-                    .password(password)
-                    .nickname(nickname)
-                    .authLevel(AuthLevel.AUTHOR)
-                    .build();
+                    //username 이 admin 인경우 admin 권한부여
+                    if(nickname=="admin"){
+                        member=Member.builder()
+                                .email(email)
+                                .username(username)
+                                .password(password)
+                                .nickname(nickname)
+                                .authLevel(AuthLevel.ADMIN)
+                                .build();
+                    }else{
+                        member=Member.builder()
+                                .email(email)
+                                .username(username)
+                                .password(password)
+                                .nickname(nickname)
+                                .authLevel(AuthLevel.AUTHOR)
+                                .build();
+                    }
+
         }else{
             //작가 명이 없는 경우
                      member=Member.builder()
@@ -91,5 +103,20 @@ public class MemberService {
         memberRepository.save(member);
 
         return newRestCash;
+    }
+
+    public CashLog addCashAndReturnCashLog(Member member, int calculateRebatePrice, EventType eventType) {
+        //예치금 로그 남기기
+        CashLog cashLog=cashService.addCash(member,calculateRebatePrice,eventType);
+        //현재 + 충전 예치금 계산
+        long newRestCash=member.getRestCash()+cashLog.getPrice();
+
+        //예치금 업데이트
+        member.updateRestCash(newRestCash);
+
+
+        memberRepository.save(member);
+
+        return cashLog;
     }
 }
