@@ -91,7 +91,7 @@ public class RebateOrderItem extends BaseEntity {
         if(isRebateAvailable()==false){
             return 0;
         }
-        return payPrice-pgFee-wholesalePrice;
+        return wholesalePrice-pgFee;
     }
     public boolean isRebateAvailable(){
         if(refundPrice>0||rebateDate!=null){
