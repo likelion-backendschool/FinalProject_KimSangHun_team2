@@ -37,9 +37,9 @@ public class ProductService {
                 .author(author)
                 .subject(subject)
                 .postKeyword(postKeyword)
-                .price(wholesalePrice*4)
+                .price(wholesalePrice*3)
                 .wholesalePrice(wholesalePrice)
-                .salePrice(wholesalePrice*3)
+                .salePrice(wholesalePrice*2)
                 .build();
         productRepository.save(product);
         return product;

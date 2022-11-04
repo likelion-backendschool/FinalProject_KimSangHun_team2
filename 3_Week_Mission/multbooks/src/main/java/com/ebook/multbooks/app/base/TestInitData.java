@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Profile("test")
 public class TestInitData {
     @Bean
-    CommandLineRunner init(MemberService memberService, PasswordEncoder passwordEncoder, PostService postService, ProductService productService, CartService cartService, OrderService orderService){
+    CommandLineRunner initData(MemberService memberService, PasswordEncoder passwordEncoder, PostService postService, ProductService productService, CartService cartService, OrderService orderService){
         return args -> {
             String password=passwordEncoder.encode("1234");
             //회원 가입
