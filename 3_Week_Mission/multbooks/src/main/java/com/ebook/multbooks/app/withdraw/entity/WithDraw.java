@@ -23,7 +23,7 @@ public class WithDraw extends BaseEntity {
     private int price;
     private String bankName;
     private String bankAccount;
-    private LocalDateTime WithDrawDate;
+    private LocalDateTime withDrawDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/adm/layout/layout}">
+
+<head>
+    <title>내 출금 내역</title>
+</head>
+
+<main layout:fragment="main">
+    <div class="container mx-auto">
+        <div>
+            <h1>내 출금 내역</h1>
+
+            <div class="overflow-x-auto">
+                <table class="table table-compact w-full">
+                    <thead>
+                    <tr>
+                        <th>품목 번호</th>
+                        <th>은행 이름</th>
+                        <th>은행 계좌</th>
+                        <th>출금 금액</th>
+                        <th>출금 날짜</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="withDraw, idx : ${withDrawList}" class="text-center">
+
+                        <td th:text="${idx.count}"></td>
+                        <td th:text="${withDraw.bankName}"></td>
+                        <td th:text="${withDraw.bankAccount}"></td>
+                        <td th:text="${withDraw.price}"></td>
+                        <td th:text="${withDraw.withDrawDate}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+</html>
