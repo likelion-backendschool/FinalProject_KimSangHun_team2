@@ -43,7 +43,10 @@ public class ApiController {
 
 
         //로그인 성공시 헤더에 jwt 토큰 포함해서 반환
-       return Util.spring.responseEntityOf(RsData.of("S-1","로그인 성공"),
+       return Util.spring.responseEntityOf(RsData.of(
+               "S-1",
+                       "로그인 성공",
+                       Util.mapOf("accessToken","JWT_Access_Token","age","20")),
                Util.spring.httpHeadersOf("Authentication","JWT_Access_Token"));
     }
 }
