@@ -1,6 +1,9 @@
 package com.ebook.multbooks.global.util;
 
 import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.global.config.AppConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -114,4 +117,33 @@ public class Util {
         }
         return map;
      }
+    private static ObjectMapper getObjectMapper() {
+        return (ObjectMapper) AppConfig.getContext().getBean("objectMapper");
+    }
+
+    public static class json {
+        /*
+        * map->json
+        * */
+        public static Object toStr(Map<String, Object> map) {
+            try {
+                return getObjectMapper().writeValueAsString(map);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        /*
+        * json->map
+        * */
+        public static Map<String, Object> toMap(String jsonStr) {
+            try {
+                return getObjectMapper().readValue(jsonStr, LinkedHashMap.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
 }

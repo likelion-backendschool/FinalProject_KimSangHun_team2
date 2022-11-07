@@ -41,12 +41,12 @@ public class ApiController {
             return Util.spring.responseEntityOf(RsData.of("F-3","비밀번호가 일치하지 않습니다."));
         }
 
-
+        String accessToken= memberService.genAccessToken(member);
         //로그인 성공시 헤더에 jwt 토큰 포함해서 반환
        return Util.spring.responseEntityOf(RsData.of(
                "S-1",
                        "로그인 성공",
-                       Util.mapOf("accessToken","JWT_Access_Token","age","20")),
+                       Util.mapOf("accessToken",accessToken)),
                Util.spring.httpHeadersOf("Authentication","JWT_Access_Token"));
     }
 }

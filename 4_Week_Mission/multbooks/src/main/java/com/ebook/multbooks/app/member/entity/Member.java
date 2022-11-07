@@ -2,11 +2,13 @@ package com.ebook.multbooks.app.member.entity;
 
 import com.ebook.multbooks.app.base.entity.BaseEntity;
 import com.ebook.multbooks.app.member.authority.AuthLevel;
+import com.ebook.multbooks.global.util.Util;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.Map;
 
 /**
  * 사용자 정보를 담은  클래스
@@ -48,5 +50,16 @@ public class Member extends BaseEntity {
 
     public void updateRestCash(long newRestCash) {
         this.restCash=newRestCash;
+    }
+
+    //JWT 에 암호화되는 사용자 정보
+    public Map<String,Object> getAccessTokenClaims(){
+        return Util.mapOf(
+                "id",getId(),
+                "createDate",getCreateDate(),
+                "modifyDate",getUpdateDate(),
+                "username",getUsername(),
+                "email",getEmail()
+        );
     }
 }

@@ -1,6 +1,8 @@
 package com.ebook.multbooks.global.config;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,10 @@ public class AppConfig {
         AppConfig.context = context;
     }
 
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().registerModule(new JavaTimeModule());
+    }
     @Value("${spring.profiles.active}")
     public void setActiveProfile(String value) {
         activeProfile = value;

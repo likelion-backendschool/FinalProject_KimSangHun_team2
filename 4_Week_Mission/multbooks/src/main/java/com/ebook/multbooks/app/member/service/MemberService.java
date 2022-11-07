@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.cash.service.CashService;
 import com.ebook.multbooks.app.member.authority.AuthLevel;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.repository.MemberRepository;
+import com.ebook.multbooks.app.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final CashService cashService;
+
+    private final JwtProvider jwtProvider;
 
     public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElse(null);
@@ -118,5 +121,8 @@ public class MemberService {
         memberRepository.save(member);
 
         return cashLog;
+    }
+    public String genAccessToken(Member member) {
+        return jwtProvider.generateAccessToken(member.getAccessTokenClaims(), 60 * 60 * 24 * 90);
     }
 }
