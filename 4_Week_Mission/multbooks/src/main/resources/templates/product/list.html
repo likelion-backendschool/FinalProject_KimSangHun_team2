@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html  layout:decorate="~{layout/layout.html}" >
+<head>
+    <meta charset="UTF-8">
+    <title>도서 리스트</title>
+</head>
+<body>
+<main layout:fragment="main">
+
+    <div class="px-24 py-24 overflow-x-auto relative flex flex-wrap justify-center items-center ">
+        <div th:each=" product , loop : ${productList}" class="card bg-base-100 shadow-xl mx-3">
+            <div class="max-w-sm rounded overflow-hidden shadow-lg">
+                <!--이미지-->
+                <a th:href="@{|/product/${product.id}|}" class="block flex justify-center items-center ">
+                    <figure>
+                        <svg width="200" height="200" th:data-jdenticon-value="${product.id}"></svg>
+                    </figure>
+                </a>
+                <!--바디-->
+                <div class="px-6 py-4">
+                    <!--상품명 및 작가명-->
+                    <h2 class="card-title flex flex-wrap">
+                        <a th:href="@{|/product/${product.id}|}" class="mr-auto">
+                            <i class="fa-solid fa-book-open"></i>
+                            <span th:text="${product.subject}"></span>
+                        </a>
+                        <div class="flex">
+                            <svg width="20" height="20" th:data-jdenticon-value="${product.id}"></svg>
+                            <div th:text="${product.author}"></div>
+                        </div>
+                    </h2>
+                    <!--가격 -->
+                    <div th:text="|$:${product.salePrice}|"></div>
+
+                    <!--날짜-->
+                    <div class="flex justify-end">
+                        <div class="badge badge-outline">
+                            <i class="fa-solid fa-pen"></i>
+                            <span class="ml-2"
+                                  th:text="${#temporals.format(product.createDate, 'yy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <div class="badge badge-outline">
+                            <i class="fa-solid fa-pen"></i>
+                            <span class="ml-2"
+                                  th:text="${#temporals.format(product.createDate, 'yy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+
+                    <!--버튼-->
+                    <div class="card-actions justify-end">
+                        <form action="#" th:action="@{|/cart/add/${product.id}|}" method="post" class="register">
+                            <input
+                                    type="hidden"
+                                    th:name="${_csrf.parameterName}"
+                                    th:value="${_csrf.token}" />
+                           <button>
+                               <i class="fa-solid fa-cart-plus"></i>
+                               <span class="ml-2">장바구니</span>
+                           </button>
+                        </form>
+
+                        <a th:href="@{|/product/${product.id}|}" class="btn btn-sm">
+                            <i class="fa-solid fa-eye"></i>
+                            <span class="ml-2">보기</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
