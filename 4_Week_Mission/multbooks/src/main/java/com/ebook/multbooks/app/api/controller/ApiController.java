@@ -41,9 +41,9 @@ public class ApiController {
             return Util.spring.responseEntityOf(RsData.of("F-3","비밀번호가 일치하지 않습니다."));
         }
 
-        HttpHeaders headers=new HttpHeaders();
-        headers.set("Authentication", "JWT_Access_Token");
+
         //로그인 성공시 헤더에 jwt 토큰 포함해서 반환
-       return Util.spring.responseEntityOf(RsData.of("S-1","로그인 성공"),headers);
+       return Util.spring.responseEntityOf(RsData.of("S-1","로그인 성공"),
+               Util.spring.httpHeadersOf("Authentication","JWT_Access_Token"));
     }
 }

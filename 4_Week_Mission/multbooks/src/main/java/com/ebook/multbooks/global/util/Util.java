@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Util {
     public static class date{
@@ -91,5 +93,25 @@ public class Util {
         public static <T> ResponseEntity<RsData> responseEntityOf(RsData<T> rsData, HttpHeaders headers){
             return new ResponseEntity<>(rsData,headers,rsData.isSuccess()?HttpStatus.OK:HttpStatus.BAD_REQUEST);
         }
-    }
+        public static HttpHeaders httpHeadersOf(String... args){
+            HttpHeaders headers=new HttpHeaders();
+            Map<String,String> map=Util.mapOf(args);
+            for(String key:map.keySet()){
+                headers.set(key,map.get(key));
+            }
+            return headers;
+        }
+     }
+     public static <K,V> Map<K,V> mapOf(Object... args){
+        Map<K,V> map=new LinkedHashMap<>();
+        int size=args.length/2;
+        for(int i=0;i<size;i++){
+            int keyIdx=i*2;
+            int valueIdx=keyIdx+1;
+            K key=(K)args[keyIdx];
+            V value=(V)args[valueIdx];
+            map.put(key,value);
+        }
+        return map;
+     }
 }
