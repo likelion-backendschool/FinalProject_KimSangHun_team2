@@ -21,9 +21,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @Profile("test")
 public class TestInitData {
+    private boolean initDataDone=false;
     @Bean
     CommandLineRunner initData(MemberService memberService, PasswordEncoder passwordEncoder, PostService postService, ProductService productService, CartService cartService, OrderService orderService){
         return args -> {
+            //initData가 1번만 사용될수 있도록 설정
+            if(initDataDone)return;
+            initDataDone=true;
+
             String password=passwordEncoder.encode("1234");
             //회원 가입
             Member member1=memberService.join("user1",password,"user1@test.com","author1");
