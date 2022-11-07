@@ -3,6 +3,8 @@ package com.ebook.multbooks.app.api.controller;
 import com.ebook.multbooks.app.api.dto.LoginDto;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.global.util.RsData;
+import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,22 +24,26 @@ public class ApiController {
     private final PasswordEncoder passwordEncoder;
     @PostMapping("/member/login")
     @ResponseBody
-    public ResponseEntity<String>jwtLogin(@RequestBody LoginDto loginDto){
-        //로그인 유효성 체크
+    public ResponseEntity<RsData>jwtLogin(@RequestBody LoginDto loginDto){
+        //로그인 정보 유효성 체크
         if(loginDto.isNotValid()==true){
-            return new ResponseEntity<>(null,null, HttpStatus.BAD_REQUEST);
+            return Util.spring.responseEntityOf(RsData.of("F-1","로그인 정보가 올바르지 않습니다."));
         }
 
+        //회원가입 체크
         Member member=memberService.getMemberByUsername(loginDto.getUsername());
+        if(member==null){
+            return Util.spring.responseEntityOf(RsData.of("F-2","일치하는 회원이 존재하지 않습니다."));
+        }
 
-        //회원 가입한지 체크
-        if(member==null||passwordEncoder.matches(loginDto.getPassword(),member.getPassword())==false){
-            return new ResponseEntity<>(null,null,HttpStatus.BAD_REQUEST);
+        //비밀번호 체크
+        if(passwordEncoder.matches(loginDto.getPassword(),member.getPassword())==false){
+            return Util.spring.responseEntityOf(RsData.of("F-3","비밀번호가 일치하지 않습니다."));
         }
 
         HttpHeaders headers=new HttpHeaders();
-        headers.set("Authentication","JWT키");
-        String body="username : %s, password : %s".formatted(loginDto.getUsername(),loginDto.getPassword());
-        return new ResponseEntity<>(body,headers,HttpStatus.OK);
+        headers.set("Authentication", "JWT_Access_Token");
+        //로그인 성공시 헤더에 jwt 토큰 포함해서 반환
+       return Util.spring.responseEntityOf(RsData.of("S-1","로그인 성공"),headers);
     }
 }
