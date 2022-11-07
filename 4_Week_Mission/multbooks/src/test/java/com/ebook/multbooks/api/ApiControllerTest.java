@@ -42,4 +42,35 @@ public class ApiControllerTest {
                 .andDo(print());
         resultActions.andExpect(status().is2xxSuccessful());
     }
+    @Test
+    @DisplayName("Post /api/v1/member/login 유효성 체크 ")
+    void t2() throws Exception {
+        ResultActions resultAction1=mvc.perform(
+                        post("/api/v1/member/login")
+                                .with(csrf())
+                                .content("""
+                        {
+                            "username": "",
+                            "password": "1234"
+                        }
+                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+        resultAction1.andExpect(status().is4xxClientError());
+
+        ResultActions resultAction2=mvc.perform(
+                        post("/api/v1/member/login")
+                                .with(csrf())
+                                .content("""
+                        {
+                            "username": "",
+                            "password": ""
+                        }
+                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+        resultAction2.andExpect(status().is4xxClientError());
+    }
 }
