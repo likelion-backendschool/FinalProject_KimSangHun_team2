@@ -1,13 +1,18 @@
 package com.ebook.multbooks.app.mybook.service;
 
+import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.app.member.repository.MemberRepository;
+import com.ebook.multbooks.app.api.dto.mybook.ApiMyBookDto;
 import com.ebook.multbooks.app.mybook.entity.MyBook;
 import com.ebook.multbooks.app.mybook.repository.MyBookRepository;
 import com.ebook.multbooks.app.order.entity.Order;
 import com.ebook.multbooks.app.orderItem.entity.OrderItem;
+import com.ebook.multbooks.app.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +21,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MyBookService {
     private final MyBookRepository myBookRepository;
+    private final MemberRepository memberRepository;
+
     //책 추가
     public List<MyBook> addMyBook(Order order){
         List<MyBook> addBooks=new ArrayList<>();
@@ -43,5 +50,17 @@ public class MyBookService {
             removeBooks.add(myBook);
         }
         myBookRepository.deleteAll(removeBooks);
+    }
+
+    public List<ApiMyBookDto> getMyBooks(Long id) {
+        Member member=memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("회원정보를 찾을수가 없습니다."));
+        List<MyBook> myBooks=myBookRepository.findByMember(member);
+        List<ApiMyBookDto> apiMyBooks=new ArrayList<>();
+
+        for(MyBook myBook:myBooks){
+            ApiMyBookDto apiMyBookDto=ApiMyBookDto.of(myBook,myBook.getProduct());
+            apiMyBooks.add(apiMyBookDto);
+        }
+        return apiMyBooks;
     }
 }

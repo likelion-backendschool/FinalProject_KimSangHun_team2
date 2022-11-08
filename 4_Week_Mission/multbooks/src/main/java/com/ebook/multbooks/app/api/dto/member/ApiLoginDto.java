@@ -1,9 +1,9 @@
-package com.ebook.multbooks.app.api.dto;
+package com.ebook.multbooks.app.api.dto.member;
 
 import lombok.Data;
 
 @Data
-public class LoginDto {
+public class ApiLoginDto {
     private String username;
     private String password;
     public boolean isNotValid(){
