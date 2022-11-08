@@ -16,13 +16,13 @@ public class ApiMyBookDto {
     private LocalDateTime updateDate;
     private long ownerId;
     private ApiProductDto product;
-    public static ApiMyBookDto of(MyBook myBook, Product product){
+    public static ApiMyBookDto of(MyBook myBook){
         return ApiMyBookDto.builder()
                 .id(myBook.getId())
                 .createDate(myBook.getCreateDate())
                 .updateDate(myBook.getUpdateDate())
                 .ownerId(myBook.getMember().getId())
-                .product(ApiProductDto.of(product))
+                .product(ApiProductDto.of(myBook.getProduct()))
                 .build();
     }
 }

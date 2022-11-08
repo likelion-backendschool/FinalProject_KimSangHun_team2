@@ -1,7 +1,6 @@
 package com.ebook.multbooks.app.api.controller;
 
 import com.ebook.multbooks.app.api.dto.mybook.ApiMyBookDto;
-import com.ebook.multbooks.app.mybook.entity.MyBook;
 import com.ebook.multbooks.app.mybook.service.MyBookService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.global.util.RsData;
@@ -10,11 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,6 +29,19 @@ public class ApiMyBookController {
 
         return Util.spring.responseEntityOf(
                 RsData.successOf(Util.mapOf("myBooks",myBooks))
+        );
+    }
+    @GetMapping("/myBooks/{myBookId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<RsData> myBooks(@AuthenticationPrincipal MemberContext memberContext, @PathVariable Long myBookId){
+        ApiMyBookDto myBook =myBookService.getMyBook(memberContext.getId(),myBookId);
+
+        if(memberContext==null){
+            return Util.spring.responseEntityOf(RsData.failOf(null));
+        }
+
+        return Util.spring.responseEntityOf(
+                RsData.successOf(Util.mapOf("myBook",myBook))
         );
     }
 }

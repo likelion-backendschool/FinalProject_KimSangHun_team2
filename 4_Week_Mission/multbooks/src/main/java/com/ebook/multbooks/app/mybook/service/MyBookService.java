@@ -58,9 +58,15 @@ public class MyBookService {
         List<ApiMyBookDto> apiMyBooks=new ArrayList<>();
 
         for(MyBook myBook:myBooks){
-            ApiMyBookDto apiMyBookDto=ApiMyBookDto.of(myBook,myBook.getProduct());
+            ApiMyBookDto apiMyBookDto=ApiMyBookDto.of(myBook);
             apiMyBooks.add(apiMyBookDto);
         }
         return apiMyBooks;
+    }
+
+    public ApiMyBookDto getMyBook(Long id, Long myBookId) {
+        Member member=memberRepository.findById(id).orElseThrow(()->new EntityNotFoundException("회원이 존재하지않습니다."));
+        MyBook myBook=myBookRepository.findByMemberAndId(member,myBookId).orElseThrow(()->new EntityNotFoundException("책이 존재하지않습니다."));
+       return ApiMyBookDto.of(myBook);
     }
 }
