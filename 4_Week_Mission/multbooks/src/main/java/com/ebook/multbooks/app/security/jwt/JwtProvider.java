@@ -33,4 +33,32 @@ public class JwtProvider {
                 .signWith(getSecretKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
+
+    /*
+    * 토큰 검증
+   * */
+    public boolean verify(String token) {
+        try{
+            Jwts.parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
+    /*
+    * 토큰 내용 가져오기
+    * */
+    public Map<String, Object> getClaims(String token) {
+        String body = Jwts.parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("body", String.class);
+
+        return Util.json.toMap(body);
+    }
 }

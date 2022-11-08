@@ -3,18 +3,18 @@ package com.ebook.multbooks.app.api.controller;
 import com.ebook.multbooks.app.api.dto.LoginDto;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.member.service.MemberService;
+import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.global.util.RsData;
 import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -47,6 +47,14 @@ public class ApiController {
                "S-1",
                        "로그인 성공",
                        Util.mapOf("accessToken",accessToken)),
-               Util.spring.httpHeadersOf("Authentication","JWT_Access_Token"));
+               Util.spring.httpHeadersOf("Authentication",accessToken));
+    }
+    @GetMapping("/member/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<RsData> ShowMyDetail(@AuthenticationPrincipal MemberContext memberContext){
+        if(memberContext==null){
+            return Util.spring.responseEntityOf(RsData.failOf(null));
+        }
+        return Util.spring.responseEntityOf(RsData.successOf(memberContext));
     }
 }

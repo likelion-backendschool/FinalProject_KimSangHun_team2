@@ -6,8 +6,13 @@ import com.ebook.multbooks.global.util.Util;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,5 +66,20 @@ public class Member extends BaseEntity {
                 "username",getUsername(),
                 "email",getEmail()
         );
+    }
+
+    // 현재 회원이 가지고 있는 권한들을 List<GrantedAuthority> 형태로 리턴
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities=new ArrayList<>();
+        if(getAuthLevel()== AuthLevel.ADMIN){
+            authorities.add(new SimpleGrantedAuthority(AuthLevel.ADMIN.toString()));
+        }
+        if(getAuthLevel()== AuthLevel.USER){
+            authorities.add(new SimpleGrantedAuthority(AuthLevel.USER.toString()));
+        }
+        if(getAuthLevel()== AuthLevel.AUTHOR){
+            authorities.add(new SimpleGrantedAuthority(AuthLevel.AUTHOR.toString()));
+        }
+        return authorities;
     }
 }

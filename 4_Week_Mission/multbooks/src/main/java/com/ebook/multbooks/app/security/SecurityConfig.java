@@ -1,5 +1,6 @@
 package com.ebook.multbooks.app.security;
 
+import com.ebook.multbooks.app.security.filter.JwtAuthorizationFilter;
 import com.ebook.multbooks.app.security.handler.CustomAuthFailureHandler;
 import com.ebook.multbooks.global.util.Util;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
@@ -23,6 +25,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig{
     private final CustomAuthFailureHandler customAuthFailureHandler;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -39,6 +42,9 @@ public class SecurityConfig{
                                 .logoutUrl("/member/logout")
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))//logout get 요청으로 받을수 있도록 해줌
                                 . logoutSuccessUrl("/")
+                ).addFilterBefore(
+                        jwtAuthorizationFilter,
+                        UsernamePasswordAuthenticationFilter.class
                 );
 
         return http.build();
