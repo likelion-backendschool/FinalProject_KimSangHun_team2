@@ -4,11 +4,14 @@ import com.ebook.multbooks.app.base.entity.BaseEntity;
 import com.ebook.multbooks.app.base.entity.BaseTimeEntity;
 import com.ebook.multbooks.app.member.entity.Member;
 import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
+import com.ebook.multbooks.app.productpost.entity.ProductPost;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -34,6 +37,8 @@ public class Product extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private PostKeyword postKeyword;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductPost> productPostList;
 
     public void update(String subject, int price) {
         this.subject=subject;
