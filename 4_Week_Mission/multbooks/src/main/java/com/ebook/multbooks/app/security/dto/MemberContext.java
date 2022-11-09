@@ -1,6 +1,8 @@
 package com.ebook.multbooks.app.security.dto;
 
 import com.ebook.multbooks.app.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +19,7 @@ import java.util.List;
  *
  * */
 @Getter
+@JsonIncludeProperties({"id","createDate","updateDate","username","email","nickname"})
 public class MemberContext extends User {
     private final Long id;
     private final LocalDateTime createDate;
@@ -26,6 +29,15 @@ public class MemberContext extends User {
     private String email;
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
         super(member.getUsername(),member.getPassword(),authorities);
+        this.id=member.getId();
+        this.createDate=member.getCreateDate();
+        this.updateDate=member.getUpdateDate();
+        this.nickname=member.getNickname();
+        this.email=member.getEmail();
+        this.username=member.getUsername();
+    }
+    public MemberContext(Member member) {
+        super(member.getUsername(),member.getPassword(),member.getAuthorities());
         this.id=member.getId();
         this.createDate=member.getCreateDate();
         this.updateDate=member.getUpdateDate();

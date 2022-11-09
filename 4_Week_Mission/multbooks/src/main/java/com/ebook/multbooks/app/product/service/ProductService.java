@@ -1,6 +1,7 @@
 package com.ebook.multbooks.app.product.service;
 
 import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.app.post.entity.Post;
 import com.ebook.multbooks.app.postkeyword.entity.PostKeyword;
 import com.ebook.multbooks.app.postkeyword.repository.PostKeywordRepositoryImpl;
 import com.ebook.multbooks.app.postkeyword.service.PostKeywordService;
@@ -11,11 +12,14 @@ import com.ebook.multbooks.app.product.entity.Product;
 import com.ebook.multbooks.app.product.exception.ActorCanNotModifyException;
 import com.ebook.multbooks.app.product.exception.ProductNotFoundException;
 import com.ebook.multbooks.app.product.repository.ProductRepository;
+import com.ebook.multbooks.app.productpost.entity.ProductPost;
+import com.ebook.multbooks.app.productpost.service.ProductPostService;
 import com.ebook.multbooks.global.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,6 +30,9 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     private final ProductMapper productMapper;
+
+    private final ProductPostService productPostService;
+
     /**
      *
      * wholesalePrice 를 매개변수로받고
@@ -42,6 +49,20 @@ public class ProductService {
                 .salePrice(wholesalePrice*2)
                 .build();
         productRepository.save(product);
+        return product;
+    }
+    public Product createProduct(Member author, String subject, int wholesalePrice, List<Post> posts) {
+        Product product=Product.builder()
+                .author(author)
+                .subject(subject)
+                .price(wholesalePrice*3)
+                .wholesalePrice(wholesalePrice)
+                .salePrice(wholesalePrice*2)
+                .build();
+        productRepository.save(product);
+
+        productPostService.create(product,posts);
+
         return product;
     }
 

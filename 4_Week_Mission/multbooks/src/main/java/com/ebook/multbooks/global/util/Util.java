@@ -1,12 +1,20 @@
 package com.ebook.multbooks.global.util;
 
 import com.ebook.multbooks.app.member.entity.Member;
+import com.ebook.multbooks.global.config.AppConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Util {
     public static class date{
@@ -79,6 +87,63 @@ public class Util {
                     .map(keyword-> keyword.trim()).toArray(String[]::new);
 
            return keywords;
+        }
+    }
+    public static class spring{
+        public static <T> ResponseEntity<RsData> responseEntityOf(RsData<T> rsData){
+            return responseEntityOf(rsData,null);
+        }
+        public static <T> ResponseEntity<RsData> responseEntityOf(RsData<T> rsData, HttpHeaders headers){
+            return new ResponseEntity<>(rsData,headers,rsData.isSuccess()?HttpStatus.OK:HttpStatus.BAD_REQUEST);
+        }
+        public static HttpHeaders httpHeadersOf(String... args){
+            HttpHeaders headers=new HttpHeaders();
+            Map<String,String> map=Util.mapOf(args);
+            for(String key:map.keySet()){
+                headers.set(key,map.get(key));
+            }
+            return headers;
+        }
+     }
+     public static <K,V> Map<K,V> mapOf(Object... args){
+        Map<K,V> map=new LinkedHashMap<>();
+        int size=args.length/2;
+        for(int i=0;i<size;i++){
+            int keyIdx=i*2;
+            int valueIdx=keyIdx+1;
+            K key=(K)args[keyIdx];
+            V value=(V)args[valueIdx];
+            map.put(key,value);
+        }
+        return map;
+     }
+    private static ObjectMapper getObjectMapper() {
+        return (ObjectMapper) AppConfig.getContext().getBean("objectMapper");
+    }
+
+    public static class json {
+        /*
+        * map->json
+        * */
+        public static Object toStr(Map<String, Object> map) {
+            try {
+                return getObjectMapper().writeValueAsString(map);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        /*
+        * json->map
+        * */
+        public static Map<String, Object> toMap(String jsonStr) {
+            try {
+                return getObjectMapper().readValue(jsonStr, LinkedHashMap.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 }

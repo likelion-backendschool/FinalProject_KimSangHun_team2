@@ -19,6 +19,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
+
 @Configuration
 @Profile("dev")
 public class DevInitData {
@@ -47,10 +49,10 @@ public class DevInitData {
            Post post2=postService.writePost(member2.getUsername(),new PostWriteForm("글제목2","글내용2","글내용2","#로맨스 #판타지"));
 
            //2명의작가 각키워드 별로 상품 만들기
-           Product product1=productService.createProduct(member1,"도서1",1000,1L);//자신의 글의 키워드 중 마법 키워드를 가지는 도서 생성
-           Product product2=productService.createProduct(member1,"도서2",2000,2L);//자신의 글의 키워드 중 기사 키워드를 가지는 도서 생성
-           Product product3=productService.createProduct(member2,"도서3",3000,3L);//자신의 글의 키워드 중 로맨스 키워드를 가지는 도서 생성
-           Product product4=productService.createProduct(member2,"도서4",4000,4L);//자신의 글의 키워드 중 판타지 키워드를 가지는 도서 생성
+           Product product1=productService.createProduct(member1,"도서1",1000, Arrays.asList(post1,post2));//자신의 글의 키워드 중 마법 키워드를 가지는 도서 생성
+           Product product2=productService.createProduct(member1,"도서2",2000,Arrays.asList(post1,post2));//자신의 글의 키워드 중 기사 키워드를 가지는 도서 생성
+           Product product3=productService.createProduct(member2,"도서3",3000,Arrays.asList(post1,post2));//자신의 글의 키워드 중 로맨스 키워드를 가지는 도서 생성
+           Product product4=productService.createProduct(member2,"도서4",4000,Arrays.asList(post1,post2));//자신의 글의 키워드 중 판타지 키워드를 가지는 도서 생성
 
            //장바구니에 다른사람 상품 담기
            CartItem cartItem1=cartService.addItem(member1,product3);
