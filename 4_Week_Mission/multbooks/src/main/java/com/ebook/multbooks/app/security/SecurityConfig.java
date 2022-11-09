@@ -29,7 +29,9 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .cors().disable()
+                .csrf().disable() // CSRF 토큰 끄기
+                .httpBasic().disable() // httpBaic 로그인 방식 끄기
                 .formLogin(
                         formLogin -> formLogin
                                 .loginPage("/member/login")

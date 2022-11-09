@@ -5,6 +5,7 @@ import com.ebook.multbooks.app.mybook.service.MyBookService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.global.util.RsData;
 import com.ebook.multbooks.global.util.Util;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,7 @@ public class ApiMyBookController {
     private final MyBookService myBookService;
     @GetMapping("/myBooks")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<RsData> myBooks(@AuthenticationPrincipal MemberContext memberContext){
+    public ResponseEntity<RsData> myBooks(@Parameter(hidden = true) @AuthenticationPrincipal MemberContext memberContext){
         List<ApiMyBookDto> myBooks=myBookService.getMyBooks(memberContext.getId());
 
         if(memberContext==null){
@@ -33,7 +34,7 @@ public class ApiMyBookController {
     }
     @GetMapping("/myBooks/{myBookId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<RsData> myBooks(@AuthenticationPrincipal MemberContext memberContext, @PathVariable Long myBookId){
+    public ResponseEntity<RsData> myBooks(@Parameter(hidden = true) @AuthenticationPrincipal MemberContext memberContext, @Parameter(hidden = true) @PathVariable Long myBookId){
         ApiMyBookDto myBook =myBookService.getMyBook(memberContext.getId(),myBookId);
 
         if(memberContext==null){

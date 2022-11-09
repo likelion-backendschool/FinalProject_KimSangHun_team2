@@ -6,6 +6,7 @@ import com.ebook.multbooks.app.member.service.MemberService;
 import com.ebook.multbooks.app.security.dto.MemberContext;
 import com.ebook.multbooks.global.util.RsData;
 import com.ebook.multbooks.global.util.Util;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,14 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class ApiMemberController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
     @PostMapping("/member/login")
-    @ResponseBody
     public ResponseEntity<RsData>jwtLogin(@RequestBody ApiLoginDto apiLoginDto){
         //로그인 정보 유효성 체크
         if(apiLoginDto.isNotValid()==true){
@@ -47,9 +47,10 @@ public class ApiMemberController {
                        Util.mapOf("accessToken",accessToken)),
                Util.spring.httpHeadersOf("Authentication",accessToken));
     }
+
     @GetMapping("/member/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<RsData> ShowMyDetail(@AuthenticationPrincipal MemberContext memberContext){
+    public ResponseEntity<RsData> ShowMyDetail(@Parameter(hidden = true) @AuthenticationPrincipal MemberContext memberContext){
         if(memberContext==null){
             return Util.spring.responseEntityOf(RsData.failOf(null));
         }
