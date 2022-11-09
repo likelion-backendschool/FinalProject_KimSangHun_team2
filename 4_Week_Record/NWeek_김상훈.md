@@ -1,60 +1,198 @@
-### 커밋으로 보는 개발핵심과정
+### 4주차과제정리
 
-1. **spring batch 추가 및 초기설정**
-    1. 실행과정이 ddl→job→devinitData 이기때문에 
-    DDL로 테이블생성→DevInitData 초기 데이터 생성→Job 로직실행
-    과정을 위해서 Job 로직 내부에 initData.run 실행
+### RestApi 구현을 위한 HTTP 정리
+
+- 서로다른 웹서비스가 통신을 하기위해서는 **정해진 형식**이 필요함
+- 우리는 주로  서버와 클라이언트 사이의 통신 방법인 **HTTP**를 방식 을 사용함
+- 스프링부트 또한  HTTP 통신에 맞게 데이터를 송수신해야함→쉽고 빠르게 규격에 맞춘 HTTP 응답을 보내기 위해 Response Entity를 사용하게 된다.
+- ResponseEntity를 잘사용하기위해선 먼저 HTTP 요청,응답에대해서 상세하게 알아야함
+    - HTTP요청
+        - HTTP요청은 크게 StartLine,Headers,Body 로 나뉨
+        - StartLine은 method,URL,version으로 이루어짐
+        - Headers는 요청에 대한 접속 운영체제,브라우저,인증정보와 같은 부가정보가 담김
+        - Body는 요청에 관련된 json,html 내용 포함
+    - HTTP응답
+        - HTTP응답도 크게 StartLine,Headers,Body 로 나뉨
+        - StartLine은 **요청에대한 처리상태코드를 나타냄**
+        - Headers는 요청에 대한 접속 운영체제,브라우저,인증정보와 같은 부가정보가 담김
+        - Body는 요청에 관련된 json,html 내용 포함
+- 이러한 HTTP Response를 데이터만 넣어주면 자동으로 구성해주는것이 
+@ResponseBody와 ResponseEntity 이다.
+    - @ResponseBody는 HttpMessageConverter 를 이용해 객체를 HTTP 규격에 맞는 응답으로 직렬화를 해줌→하지만 StatucCode와 Header 의 변경이 복잡하고 어려움
+    - ResponseEntity는 HttpEntity 클래스를 상속받은 클래스로 쉽게 직접적으로 StatusCode 와 Header 를 설정해줄수있다.
+    - **ResponseEntity 구조**
         
-       
-        ![1](https://user-images.githubusercontent.com/40134318/199448340-8ade568e-2536-4697-af2e-259d619f8647.png)
+        ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/34db0add-7af4-4717-bb30-66b6a9c15a82/Untitled.png)
+        
+    - **HttpEntity 구조**
+        
+        ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/999a9bc7-2424-49b7-a7c2-cc41585ef47b/Untitled.png)
+        
+    - 위에서 본것과 같이 Generic 에 넣은 데이터 형식은 body 의 타입으로 지정되어
+    사용 방법은 다음과 같다
+    - **new ResponseEntity<body 타입>(body, headers,StatusCode);**
+    - **예시 코드**
+        
+        ```bash
+        public ResponseEntity<MoveResponseDto> move(@PathVariable String name,
+            @RequestBody MoveDto moveDto) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Game", "Chess");
+            
+            String command = makeMoveCmd(moveDto.getSource(), moveDto.getTarget());
+            springChessService.move(name, command, new Commands(command));
+            
+            MoveResponseDto moveResponseDto = new MoveResponseDto(springChessService
+                .continuedGameInfo(name), name);
+        		//R
+            return new ResponseEntity<MoveResponseDto>(moveResponseDto, headers, HttpStatus.valueOf(200)); // ResponseEntity를 활용한 응답 생성
+        }
+        ```
+        
 
-    2. 뒤에 발생할 devinitData 를 무시하기위해 내부에서 중복수행체크
+### 4_week_mission 구현 설명
+
+- **JWT 구현 및 응답**
+    - **build.gradle→JWT 라이브러리 추가**
+        
+        ```bash
+        //JWT
+        	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+        	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+        	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+        ```
+        
+    - **application.yml→SecretKey 정의**
+        
+        ```xml
+        custom:
+          jwt:
+            secretKey: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
+        ```
+        
+    - **JwtConfig.java**→**jwt 에서 사용될** **SecretKey 생성 해서 빈에 담기**
+        
+        ```java
+        /*
+        * Jwt 에 사용되는 시크릿키관련 설정
+        * */
+        @Configuration
+        public class JwtConfig {
+            @Value("${custom.jwt.secretKey}")
+            private String secretKeyPlain;
+        
+            @Bean
+            public SecretKey jwtSecretKey(){
+                String keyBase64Encoded= Base64.getEncoder().encodeToString(secretKeyPlain.getBytes());
+                return Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
+            }
+        }
+        ```
+        
+    - **Member.java→로그인 성공후 jwt 토큰생성 위해 사용되는  로그인 정보→map 으로 추출 메서드 생성**
+        
+        ```java
+        ...
+        
+        //JWT 에 암호화되는 사용자 정보
+            public Map<String,Object> getAccessTokenClaims(){
+                return Util.mapOf(
+                        "id",getId(),
+                        "createDate",getCreateDate(),
+                        "modifyDate",getUpdateDate(),
+                        "username",getUsername(),
+                        "email",getEmail()
+                );
+            }
+        ```
+        
+    - **Util.java→ Appcofig 안에 등록된 objectMapper 를 이용해서 map↔Json 직열화,역직열화 메서드 생성**
+        
+        ```java
+        ...
+        
+        private static ObjectMapper getObjectMapper() {
+                return (ObjectMapper) AppConfig.getContext().getBean("objectMapper");
+            }
+        
+            public static class json {
+                /*
+                * map->json
+                * */
+                public static Object toStr(Map<String, Object> map) {
+                    try {
+                        return getObjectMapper().writeValueAsString(map);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+        
+                /*
+                * json->map
+                * */
+                public static Map<String, Object> toMap(String jsonStr) {
+                    try {
+                        return getObjectMapper().readValue(jsonStr, LinkedHashMap.class);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+            }
+        ```
+        
+    - **JwtProvider.java→ 로그인 정보와 만료시간을 전달받아 위에서 정의한 함수들을 이용해서
+     jwt token을 생성하는 메서드→상세하게는 map으로 받은 사용자정보를 secretkey 로 암호화해서 반환**
+        
+        ```java
+        @Configuration
+        @RequiredArgsConstructor
+        public class JwtProvider {
+            private final SecretKey jwtSecretKey;
+        
+            private SecretKey getSecretKey(){
+                return jwtSecretKey;
+            }
+        
+            /*
+            *
+            * jwt token 생성
+            *
+            * */
+            public String generateAccessToken(Map<String,Object> claims,int seconds){
+                long now=new Date().getTime();
+                Date accessTokenExpiresIn=new Date(now+1000L*seconds);
+                return Jwts.builder()
+                        .claim("body", Util.json.toStr(claims))
+                        .setExpiration(accessTokenExpiresIn)
+                        .signWith(getSecretKey(), SignatureAlgorithm.HS512)
+                        .compact();
+            }
+        }
+        ```
+        
+    - **MemberService.java**
+        
+        ```java
+        public String genAccessToken(Member member) {
+                return jwtProvider.generateAccessToken(member.getAccessTokenClaims(), 60 * 60 * 24 * 90);
+            }
+        ```
+        
     
-    ![2](https://user-images.githubusercontent.com/40134318/199448401-1acb5f82-c4bb-4780-a50e-1bf68552e1e2.png)
-
-    
-2. **정산페이지 에서 정산데이터 생성**
-    1. 정산데이터를 수동으로 생성하는 과정은 스프링배치를 이용해서 정산데이터를 생성하는 과정과 플로우가 똑같다.
-        1. 정산전체과정
-            1. 주문 품목 복사해서 정산 테이블 만들기
-            2. 정산에  필요데이터 한테이블에모으기(주문,회원 정보 등등)
-            3. 정산에 필요한 makedata 쿼리작성
-            4. 쿼리에 맞게 itemReader 작성
-            5. 쿼리에 맞게 itemProcessor 작성
-            6. 쿼리에 맞게 itemWriter 작성
-    2. 4~6번과정은 날짜범위네 데이터 추출→ 주문상품 데이터를 이용해서 정산에 필요한 데이터로 변경후 저장→정산데이터 저장 의 과정을 가진다.
-    3. 정산데이터로 변경시 fk 설정은 제거하고 join 만 가능하도록해야 원본 테이블들의 작업을 방해하지 않는다.foreignKey설정은 정확하게는 테이블 생성시에만 사용된다.
+    - **ApiController.java**
         
-       ![3](https://user-images.githubusercontent.com/40134318/199448442-2d9d6af7-1679-4a7a-9abd-45f2f2b32cf6.png)
-
+        ```java
+        ...
         
-    4. 연월 기입시 지난달 15일~이번달 15일 까지의 정산데이터를 만들수있도록 로직설정했다.
-    정산주문품목을 구분하는 기준은 orderItem 이기때문에 중복시 삭제후 생성하였지만 이후 개발 과정에서 update  방식으로 정산이 중복적으로 반복되지 않도록 정산내용을 가져가도록 수정했다.
-        
-        ![4](https://user-images.githubusercontent.com/40134318/199448488-b891b779-7134-4e86-9817-687382758903.png)
-
-        
-        **로직 수정후**
-        
-        ![5](https://user-images.githubusercontent.com/40134318/199448523-2db63cd9-7164-463e-bc36-f1db17fef3e1.png)
-
-        ![6](https://user-images.githubusercontent.com/40134318/199448545-a8f6d9d1-7c96-48b6-98fc-a6a682bc90bf.png)
-
-        
-3. **건별정산**
-    1. 정산은 예치금 로그를 남기고 정산 금액만큼 판매자에게 예치금을 충전시켜주고
-    정산 상품 속성인 RebateOrderItem.rebateDate, RebateOrderItem.rebateCashLog 값을 업데이트 해주는 과정글 가진다.
-    
-    ![7](https://user-images.githubusercontent.com/40134318/199448569-fc45c4a3-a532-4aaa-b8fc-15dbc4046f41.png)
-
-    
-    ![8](https://user-images.githubusercontent.com/40134318/199448587-12fe550b-b116-4f5d-b1e3-141e46800379.png)
-
-    
-4. **정산금액 로직 변경,spring batch 를 이용해 15일 새벽4시에 정산데이터 생성하도록 설정**
-    1. batch 설정시에 주의해야하는것은 Page 형식으로 값을 return 하도록 itemReader 에 사용되는 쿼리를 새로 생성해주어야한다.
-    2. 그밖에 다른 로직들은 batch 생성방식에 맞춰서 이전에 작성한 건별생성 로직을 이용하여 작성하였다.
-    3. 이후 scheduling을 위해서 JobScheculer 클래스를 이용해서 키값이 yearMonth 인  jobparameter 값으로 해당 연월을 제공하여서 구현하였다.
-        
-        ![9](https://user-images.githubusercontent.com/40134318/199448607-fff7cf2c-94fa-47cb-bac1-b28254876500.png)
-
+        String accessToken= memberService.genAccessToken(member);
+                //로그인 성공시 헤더에 jwt 토큰 포함해서 반환
+               return Util.spring.responseEntityOf(RsData.of(
+                       "S-1",
+                               "로그인 성공",
+                               Util.mapOf("accessToken",accessToken)),
+                       Util.spring.httpHeadersOf("Authentication","JWT_Access_Token"));
+            }
+        }
+        ```
