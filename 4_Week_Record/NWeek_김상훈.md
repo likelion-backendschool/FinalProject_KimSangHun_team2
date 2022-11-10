@@ -22,11 +22,13 @@
     - ResponseEntity는 HttpEntity 클래스를 상속받은 클래스로 쉽게 직접적으로 StatusCode 와 Header 를 설정해줄수있다.
     - **ResponseEntity 구조**
         
-        ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/34db0add-7af4-4717-bb30-66b6a9c15a82/Untitled.png)
+        ![p1](https://user-images.githubusercontent.com/40134318/201179259-de2bc983-8434-4ebf-b0d7-69222e9cfc6f.png)
+
         
     - **HttpEntity 구조**
         
-        ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/999a9bc7-2424-49b7-a7c2-cc41585ef47b/Untitled.png)
+        ![p2](https://user-images.githubusercontent.com/40134318/201179280-3f0aa87d-08aa-47c0-97c2-2704e0ff8115.png)
+
         
     - 위에서 본것과 같이 Generic 에 넣은 데이터 형식은 body 의 타입으로 지정되어
     사용 방법은 다음과 같다
@@ -192,7 +194,113 @@
                        "S-1",
                                "로그인 성공",
                                Util.mapOf("accessToken",accessToken)),
-                       Util.spring.httpHeadersOf("Authentication","JWT_Access_Token"));
+                       Util.spring.httpHeadersOf("Authentication",accessToken));
             }
         }
         ```
+        
+- **리액트요청안에 있는 JWT받아서 로그인한 회원 상세보기 구현**
+    - **JwtProvider.java**→**JWT 읽어서 토큰 검즘,토큰 내용 가져오는 메서드 추가**
+        
+        ```java
+        /*
+            * 토큰 검증
+           * */
+            public boolean verify(String token) {
+                try{
+                    Jwts.parserBuilder()
+                            .setSigningKey(getSecretKey())
+                            .build()
+                            .parseClaimsJws(token);
+                }catch (Exception e){
+                    return false;
+                }
+                return true;
+            }
+            /*
+            * 토큰 내용 가져오기
+            * */
+            public Map<String, Object> getClaims(String token) {
+                String body = Jwts.parserBuilder()
+                        .setSigningKey(getSecretKey())
+                        .build()
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .get("body", String.class);
+        
+                return Util.json.toMap(body);
+            }
+        ```
+        
+    - **JwtAuthorizationFilter.class →JWT 의 claims 를 읽어 Principal 로 등록하는 filter 생성**
+        
+        ```java
+        /*
+        * 로그인후 요청을주면 요청헤더에 있는  JWT 토큰으로 부터
+        * MemberContext 생성하는 filter
+        * */
+        @Slf4j
+        @Component
+        @RequiredArgsConstructor
+        public class JwtAuthorizationFilter extends OncePerRequestFilter {
+            private final JwtProvider jwtProvider;
+            private final MemberService memberService;
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+               String bearerToken=request.getHeader("Authorization");
+               if(bearerToken!=null){
+                   String token=bearerToken.substring("Bearer ".length());
+                    if(jwtProvider.verify(token)){
+                        Map<String,Object> claims=jwtProvider.getClaims(token);
+                        String username=(String)claims.get("username");
+                        Member member=memberService.getMemberByUsername(username);
+                        forceAuthentication(member);
+                    }
+               }
+               filterChain.doFilter(request,response);
+            }
+        
+            /*
+            * memberContext 생성후 로그인 정보로 변경
+            * */
+            private void forceAuthentication(Member member) {
+                MemberContext memberContext = new MemberContext(member);
+        
+                UsernamePasswordAuthenticationToken authentication =
+                        UsernamePasswordAuthenticationToken.authenticated(
+                                memberContext,//principal->객체
+                                null,//crediencial->암호
+                                member.getAuthorities()//authority->권한
+                        );
+        
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
+            }
+        }
+        ```
+        
+    - **SecurityConfig.java →Controller 사용 전 필터 추가**
+        
+        ```java
+        ...
+        .addFilterBefore(
+                               jwtAuthorizationFilter,
+                               UsernamePasswordAuthenticationFilter.class
+                        );
+        ```
+        
+    
+- **feat [#18](https://github.com/likelion-backendschool/FinalProject_KimSangHun_team2/issues/18): 내 도서 리스트 구현**
+    - - `내 도서에 대한 Api 출력을위해 ApiDto 생성
+    - dto 안에 static 메서드로 생성하고 mapping 하는 함수생성
+    - RsData 의 data 출력시 클래스 명을 출력하고 싶으면 map 으로 만들어서 출력하기`
+- **feat [#18](https://github.com/likelion-backendschool/FinalProject_KimSangHun_team2/issues/18): swagger 기능추가,리액트와 연결 설정 추가**
+    - - `cors 설정을 추가해 타 도메인에서 api 호출가능
+    - security 설정에도 cors 관련 설정 추가
+    - Parameter annotation 으로 swagger 에 파라미터 숨기기`
+- **feat [#18](https://github.com/likelion-backendschool/FinalProject_KimSangHun_team2/issues/18): 내 도서 상세보기에서 사용될 ProductPost 엔티티 생성**
+    - - `상품 서비스안에 상품 등록시 글 연관관계 등록 기능 추가
+    - 상품 등록시 글과의 연관관계를 등록하여 도서 상세보기시 상품의 글들을 볼수있다.
+    - 상품글 엔티티,서비스 생성
+    - ApiMyBookDetail 을 이용해 내책,상품,상품관련글을 전체적으로 출력`
